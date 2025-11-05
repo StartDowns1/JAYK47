@@ -1,6 +1,168 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Color themes
+const themes = {
+  aggressiveRed: {
+    name: 'Aggressive Red',
+    primary: '#DC0000',
+    secondary: '#000',
+    text: '#fff',
+    border: '#DC0000',
+    shadow: 'rgba(220, 0, 0, 0.8)',
+    glow: 'rgba(220, 0, 0, 0.5)',
+    gradient: 'linear-gradient(145deg, #DC0000, #FF0000)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#DC0000'
+  },
+  pastelRed: {
+    name: 'Pastel Red',
+    primary: '#FFB3B3',
+    secondary: '#FFF5F5',
+    text: '#8B0000',
+    border: '#FFB3B3',
+    shadow: 'rgba(255, 179, 179, 0.6)',
+    glow: 'rgba(255, 179, 179, 0.4)',
+    gradient: 'linear-gradient(145deg, #FFB3B3, #FFC9C9)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#FFB3B3'
+  },
+  pastelBlue: {
+    name: 'Pastel Blue',
+    primary: '#B3D9FF',
+    secondary: '#F0F8FF',
+    text: '#003366',
+    border: '#B3D9FF',
+    shadow: 'rgba(179, 217, 255, 0.6)',
+    glow: 'rgba(179, 217, 255, 0.4)',
+    gradient: 'linear-gradient(145deg, #B3D9FF, #CCE5FF)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#B3D9FF'
+  },
+  aggressiveBlue: {
+    name: 'Aggressive Blue',
+    primary: '#0066FF',
+    secondary: '#000033',
+    text: '#fff',
+    border: '#0066FF',
+    shadow: 'rgba(0, 102, 255, 0.8)',
+    glow: 'rgba(0, 102, 255, 0.5)',
+    gradient: 'linear-gradient(145deg, #0066FF, #0080FF)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#0066FF'
+  },
+  neonPurple: {
+    name: 'Neon Purple',
+    primary: '#9D00FF',
+    secondary: '#1A001A',
+    text: '#fff',
+    border: '#9D00FF',
+    shadow: 'rgba(157, 0, 255, 0.8)',
+    glow: 'rgba(157, 0, 255, 0.5)',
+    gradient: 'linear-gradient(145deg, #9D00FF, #B84DFF)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#9D00FF'
+  },
+  neonGreenYellow: {
+    name: 'Neon Green-Yellow',
+    primary: '#CCFF00',
+    secondary: '#1A1A00',
+    text: '#000',
+    border: '#CCFF00',
+    shadow: 'rgba(204, 255, 0, 0.8)',
+    glow: 'rgba(204, 255, 0, 0.5)',
+    gradient: 'linear-gradient(145deg, #CCFF00, #E6FF4D)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#CCFF00'
+  }
+};
+
+// Theme Selector Component
+function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const themeKeys = Object.keys(themes);
+
+  if (isMenuOpen) return null;
+
+  return (
+    <div className="fixed top-8 left-8 z-50">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-14 h-14 rounded-full flex items-center justify-center border-4 cursor-pointer transition-all duration-500"
+        style={{
+          background: themes[currentTheme].secondary,
+          borderColor: themes[currentTheme].border,
+          boxShadow: `0 0 20px ${themes[currentTheme].shadow}`
+        }}
+      >
+        <div
+          className="w-8 h-8 rounded-full"
+          style={{
+            background: themes[currentTheme].gradient,
+            boxShadow: `0 0 10px ${themes[currentTheme].shadow}`
+          }}
+        />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="absolute top-20 left-0 flex flex-col gap-3 p-4 rounded-3xl border-2"
+            style={{
+              background: 'rgba(0, 0, 0, 0.95)',
+              borderColor: themes[currentTheme].border,
+              backdropFilter: 'blur(10px)'
+            }}
+          >
+            {themeKeys.map((key, idx) => (
+              <motion.button
+                key={key}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.08, duration: 0.4 }}
+                onClick={() => {
+                  onThemeChange(key);
+                  setIsOpen(false);
+                }}
+                className="w-10 h-10 rounded-full border-2 cursor-pointer transition-all duration-500"
+                style={{
+                  background: themes[key].gradient,
+                  borderColor: currentTheme === key ? '#fff' : themes[key].border,
+                  boxShadow: currentTheme === key 
+                    ? `0 0 20px ${themes[key].shadow}` 
+                    : `0 0 10px ${themes[key].shadow}`,
+                  transform: currentTheme === key ? 'scale(1.1)' : 'scale(1)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.2)';
+                  e.currentTarget.style.boxShadow = `0 0 25px ${themes[key].shadow}`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = currentTheme === key ? 'scale(1.1)' : 'scale(1)';
+                  e.currentTarget.style.boxShadow = currentTheme === key 
+                    ? `0 0 20px ${themes[key].shadow}` 
+                    : `0 0 10px ${themes[key].shadow}`;
+                }}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // DecryptedText Component
 function DecryptedText({
   text,
@@ -176,7 +338,8 @@ function SequentialTextCursor({
   spacing = 100,
   exitDuration = 0.5,
   removalInterval = 30,
-  maxPoints = 8
+  maxPoints = 8,
+  theme
 }) {
   const [trail, setTrail] = useState([]);
   const containerRef = useRef(null);
@@ -267,9 +430,9 @@ function SequentialTextCursor({
                 whiteSpace: 'nowrap', 
                 fontSize: '2.5rem',
                 fontWeight: 'bold',
-                color: '#DC0000',
-                textShadow: '0 0 20px rgba(220, 0, 0, 0.8), 0 0 40px rgba(220, 0, 0, 0.5)',
-                filter: 'drop-shadow(0 0 10px rgba(220, 0, 0, 0.9))'
+                color: theme.primary,
+                textShadow: `0 0 20px ${theme.shadow}, 0 0 40px ${theme.glow}`,
+                filter: `drop-shadow(0 0 10px ${theme.shadow})`
               }}
             >
               {item.letter}
@@ -282,7 +445,7 @@ function SequentialTextCursor({
 }
 
 // BubbleMenu Component
-function BubbleMenu({ items, onNavigate }) {
+function BubbleMenu({ items, onNavigate, theme }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleToggle = () => {
@@ -299,26 +462,32 @@ function BubbleMenu({ items, onNavigate }) {
     <>
       <button
         type="button"
-        className="fixed top-8 right-8 w-16 h-16 rounded-none flex flex-col items-center justify-center border-2 cursor-pointer z-50 transition-all duration-300"
+        className="fixed top-8 right-8 w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 cursor-pointer z-50 transition-all duration-500"
         style={{
-          background: '#000',
-          borderColor: '#DC0000',
-          boxShadow: '0 0 20px rgba(220, 0, 0, 0.5), inset 0 0 10px rgba(220, 0, 0, 0.2)'
+          background: theme.secondary,
+          borderColor: theme.border,
+          boxShadow: `0 0 20px ${theme.glow}, inset 0 0 10px ${theme.shadow}`
         }}
         onClick={handleToggle}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = '#DC0000';
-          e.currentTarget.style.borderColor = '#fff';
-          e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 0, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.3)';
+          e.currentTarget.style.background = theme.primary;
+          e.currentTarget.style.borderColor = theme.text;
+          e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 15px rgba(255, 255, 255, 0.3)`;
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = '#000';
-          e.currentTarget.style.borderColor = '#DC0000';
-          e.currentTarget.style.boxShadow = '0 0 20px rgba(220, 0, 0, 0.5), inset 0 0 10px rgba(220, 0, 0, 0.2)';
+          e.currentTarget.style.background = theme.secondary;
+          e.currentTarget.style.borderColor = theme.border;
+          e.currentTarget.style.boxShadow = `0 0 20px ${theme.glow}, inset 0 0 10px ${theme.shadow}`;
         }}
       >
-        <span className={`w-8 h-0.5 bg-white rounded transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`} />
-        <span className={`w-8 h-0.5 bg-white rounded mt-2 transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`} />
+        <span 
+          className={`w-8 h-0.5 rounded transition-all duration-500 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`}
+          style={{ background: theme.text }}
+        />
+        <span 
+          className={`w-8 h-0.5 rounded mt-2 transition-all duration-500 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}
+          style={{ background: theme.text }}
+        />
       </button>
 
       <AnimatePresence>
@@ -327,7 +496,7 @@ function BubbleMenu({ items, onNavigate }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
             className="fixed inset-0 flex items-center justify-center z-40"
             style={{ background: 'rgba(0, 0, 0, 0.95)' }}
           >
@@ -341,29 +510,31 @@ function BubbleMenu({ items, onNavigate }) {
                   animate={{ scale: 1, opacity: 1, x: 0 }}
                   exit={{ scale: 0, opacity: 0, x: 100 }}
                   transition={{ 
-                    delay: idx * 0.1,
+                    delay: idx * 0.15,
                     type: 'spring',
-                    stiffness: 300,
-                    damping: 20
+                    stiffness: 200,
+                    damping: 25,
+                    duration: 0.6
                   }}
-                  className="px-20 py-8 text-6xl font-black rounded-none text-white border-4 flex items-center justify-center transition-all duration-300 no-underline"
+                  className="px-20 py-8 text-6xl font-black rounded-full text-white border-4 flex items-center justify-center transition-all duration-500 no-underline"
                   style={{
-                    backgroundColor: '#000',
-                    borderColor: '#DC0000',
-                    boxShadow: '0 0 30px rgba(220, 0, 0, 0.6)',
+                    backgroundColor: theme.secondary,
+                    borderColor: theme.border,
+                    color: theme.text,
+                    boxShadow: `0 0 30px ${theme.shadow}`,
                     letterSpacing: '0.1em'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.backgroundColor = '#DC0000';
-                    e.currentTarget.style.borderColor = '#fff';
-                    e.currentTarget.style.boxShadow = '0 0 50px rgba(220, 0, 0, 1), inset 0 0 20px rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.background = theme.gradient;
+                    e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
+                    e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 20px rgba(255, 255, 255, 0.2)`;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.backgroundColor = '#000';
-                    e.currentTarget.style.borderColor = '#DC0000';
-                    e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 0, 0, 0.6)';
+                    e.currentTarget.style.backgroundColor = theme.secondary;
+                    e.currentTarget.style.borderColor = theme.border;
+                    e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}`;
                   }}
                 >
                   {item.label}
@@ -380,6 +551,10 @@ function BubbleMenu({ items, onNavigate }) {
 // Main App
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
+  const [currentTheme, setCurrentTheme] = useState('aggressiveRed');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const theme = themes[currentTheme];
 
   const menuItems = [
     { label: 'HOME', href: '#home', page: 'home' },
@@ -387,35 +562,42 @@ export default function App() {
     { label: 'CONTACT', href: '#contact', page: 'contact' }
   ];
 
+  const handleNavigate = (page) => {
+    setCurrentPage(page);
+    setIsMenuOpen(false);
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'landing':
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
-            <SequentialTextCursor spacing={80} maxPoints={15} />
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
+            <SequentialTextCursor spacing={80} maxPoints={15} theme={theme} />
             <button
               onClick={() => setCurrentPage('home')}
-              className="text-white text-9xl font-black tracking-wider cursor-pointer bg-transparent border-8 px-16 py-8 z-10 transition-all duration-300"
+              className="text-white text-9xl font-black tracking-wider cursor-pointer bg-transparent border-8 px-16 py-8 z-10 transition-all duration-500 rounded-full"
               style={{
-                borderColor: '#DC0000',
-                textShadow: '0 0 30px rgba(220, 0, 0, 0.8), 0 0 60px rgba(220, 0, 0, 0.5)',
-                boxShadow: '0 0 40px rgba(220, 0, 0, 0.6), inset 0 0 30px rgba(220, 0, 0, 0.2)',
+                borderColor: theme.border,
+                color: theme.text,
+                textShadow: `0 0 30px ${theme.shadow}, 0 0 60px ${theme.glow}`,
+                boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
                 letterSpacing: '0.15em'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.backgroundColor = '#DC0000';
-                e.currentTarget.style.borderColor = '#fff';
-                e.currentTarget.style.boxShadow = '0 0 60px rgba(220, 0, 0, 1), inset 0 0 40px rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.background = theme.gradient;
+                e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
+                e.currentTarget.style.boxShadow = `0 0 60px ${theme.shadow}, inset 0 0 40px rgba(255, 255, 255, 0.3)`;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'scale(1)';
                 e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.borderColor = '#DC0000';
-                e.currentTarget.style.boxShadow = '0 0 40px rgba(220, 0, 0, 0.6), inset 0 0 30px rgba(220, 0, 0, 0.2)';
+                e.currentTarget.style.borderColor = theme.border;
+                e.currentTarget.style.boxShadow = `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`;
               }}
             >
-              <DecryptedText text="ENTER" animateOn="hover" speed={25} maxIterations={50} />
+              <DecryptedText text="ENTER" animateOn="hover" speed={40} maxIterations={30} />
             </button>
           </div>
         );
@@ -423,7 +605,8 @@ export default function App() {
       case 'home':
         return (
           <div className="w-full h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden">
-            <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
+            <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <div className="flex items-center justify-center gap-6">
               {['J', 'A', 'Y', 'K'].map((letter, i) => (
                 <motion.span
@@ -431,28 +614,29 @@ export default function App() {
                   initial={{ opacity: 0, y: 100, rotateX: -90 }}
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   transition={{ 
-                    delay: i * 0.15,
+                    delay: i * 0.2,
                     type: 'spring',
-                    stiffness: 200,
-                    damping: 15
+                    stiffness: 150,
+                    damping: 20,
+                    duration: 0.8
                   }}
-                  className="inline-block px-10 py-8 border-4"
+                  className="inline-block px-10 py-8 border-4 rounded-3xl"
                   style={{
                     fontSize: '9rem',
                     fontWeight: '900',
-                    color: '#fff',
-                    background: '#000',
-                    borderColor: '#DC0000',
-                    boxShadow: '0 0 40px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)',
+                    color: theme.text,
+                    background: theme.secondary,
+                    borderColor: theme.border,
+                    boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
                     letterSpacing: '0.05em',
-                    textShadow: '0 0 20px rgba(220, 0, 0, 0.8)'
+                    textShadow: `0 0 20px ${theme.shadow}`
                   }}
                 >
                   <DecryptedText
                     text={letter}
                     animateOn="view"
-                    speed={35}
-                    maxIterations={25}
+                    speed={50}
+                    maxIterations={20}
                     sequential={true}
                     revealDirection="center"
                   />
@@ -465,39 +649,40 @@ export default function App() {
       case 'music':
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
-            <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
+            <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <a
               href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-7xl font-black cursor-pointer no-underline z-10 px-20 py-10 border-4"
+              className="text-7xl font-black cursor-pointer no-underline z-10 px-20 py-10 border-4 rounded-full"
               style={{
                 color: '#fff',
                 background: '#000',
-                borderColor: '#DC0000',
-                boxShadow: '0 0 50px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)',
-                transition: 'all 0.3s ease',
+                borderColor: '#1db954',
+                boxShadow: '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)',
+                transition: 'all 0.5s ease',
                 letterSpacing: '0.1em',
-                textShadow: '0 0 20px rgba(220, 0, 0, 0.8)'
+                textShadow: '0 0 20px rgba(29, 185, 84, 0.8)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.backgroundColor = '#DC0000';
+                e.currentTarget.style.background = theme.spotify;
                 e.currentTarget.style.borderColor = '#fff';
-                e.currentTarget.style.boxShadow = '0 0 70px rgba(220, 0, 0, 1), inset 0 0 40px rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.boxShadow = `0 0 70px ${theme.spotifyShadow}, inset 0 0 40px rgba(255, 255, 255, 0.3)`;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'scale(1)';
                 e.currentTarget.style.backgroundColor = '#000';
-                e.currentTarget.style.borderColor = '#DC0000';
-                e.currentTarget.style.boxShadow = '0 0 50px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)';
+                e.currentTarget.style.borderColor = '#1db954';
+                e.currentTarget.style.boxShadow = '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)';
               }}
             >
               <DecryptedText
                 text="LISTEN ON SPOTIFY"
                 animateOn="both"
-                speed={20}
-                maxIterations={30}
+                speed={35}
+                maxIterations={25}
                 sequential={true}
                 revealDirection="center"
               />
@@ -508,55 +693,56 @@ export default function App() {
       case 'contact':
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-8">
-            <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
+            <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10 pointer-events-none">
-              <div className="text-7xl font-black mb-12 px-16 py-8 border-4 inline-block pointer-events-auto"
+              <div className="text-7xl font-black mb-12 px-16 py-8 border-4 inline-block pointer-events-auto rounded-full"
                 style={{
-                  color: '#fff',
-                  background: '#000',
-                  borderColor: '#DC0000',
-                  boxShadow: '0 0 50px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)',
+                  color: theme.text,
+                  background: theme.secondary,
+                  borderColor: theme.border,
+                  boxShadow: `0 0 50px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
                   letterSpacing: '0.1em',
-                  textShadow: '0 0 20px rgba(220, 0, 0, 0.8)'
+                  textShadow: `0 0 20px ${theme.shadow}`
                 }}
               >
                 <DecryptedText
                   text="GET IN TOUCH"
                   animateOn="view"
-                  speed={25}
-                  maxIterations={40}
+                  speed={40}
+                  maxIterations={30}
                   sequential={true}
                 />
               </div>
               
               <a
                 href="mailto:JAYK47MGMT@GMAIL.COM"
-                className="text-4xl font-bold transition-all duration-300 no-underline inline-block px-12 py-6 border-4 pointer-events-auto"
+                className="text-4xl font-bold transition-all duration-500 no-underline inline-block px-12 py-6 border-4 pointer-events-auto rounded-full"
                 style={{
-                  color: '#fff',
-                  background: '#000',
-                  borderColor: '#DC0000',
-                  boxShadow: '0 0 30px rgba(220, 0, 0, 0.6), inset 0 0 20px rgba(220, 0, 0, 0.2)',
+                  color: theme.text,
+                  background: theme.secondary,
+                  borderColor: theme.border,
+                  boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`,
                   letterSpacing: '0.05em'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.background = '#DC0000';
-                  e.currentTarget.style.borderColor = '#fff';
-                  e.currentTarget.style.boxShadow = '0 0 50px rgba(220, 0, 0, 1), inset 0 0 30px rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.background = theme.gradient;
+                  e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
+                  e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 30px rgba(255, 255, 255, 0.3)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.background = '#000';
-                  e.currentTarget.style.borderColor = '#DC0000';
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 0, 0, 0.6), inset 0 0 20px rgba(220, 0, 0, 0.2)';
+                  e.currentTarget.style.background = theme.secondary;
+                  e.currentTarget.style.borderColor = theme.border;
+                  e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`;
                 }}
               >
                 <DecryptedText
                   text="JAYK47MGMT@GMAIL.COM"
                   animateOn="hover"
-                  speed={15}
-                  maxIterations={35}
+                  speed={25}
+                  maxIterations={30}
                 />
               </a>
             </div>
@@ -567,6 +753,21 @@ export default function App() {
         return null;
     }
   };
+
+  useEffect(() => {
+    const checkMenuOpen = () => {
+      const menuButton = document.querySelector('.fixed.top-8.right-8');
+      if (menuButton) {
+        const isOpen = menuButton.querySelector('span')?.classList.contains('rotate-45');
+        setIsMenuOpen(isOpen || false);
+      }
+    };
+    
+    const observer = new MutationObserver(checkMenuOpen);
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+    
+    return () => observer.disconnect();
+  }, []);
 
   return <div className="w-full h-screen overflow-hidden">{renderPage()}</div>;
 }
