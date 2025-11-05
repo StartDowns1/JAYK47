@@ -578,14 +578,17 @@ export default function App() {
             <SequentialTextCursor spacing={80} maxPoints={15} theme={theme} />
             <button
               onClick={() => setCurrentPage('home')}
-              className="text-white font-black tracking-wider cursor-pointer bg-transparent border-4 md:border-8 z-10 transition-all duration-500 rounded-full px-8 py-4 md:px-16 md:py-8"
+              className="text-white font-black tracking-wider cursor-pointer bg-transparent border-4 md:border-8 z-10 transition-all duration-500 px-8 py-4 md:px-16 md:py-8"
               style={{
                 fontSize: 'clamp(3rem, 12vw, 9rem)',
                 borderColor: theme.border,
                 color: theme.text,
-                textShadow: `0 0 30px ${theme.shadow}, 0 0 60px ${theme.glow}`,
-                boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
-                letterSpacing: '0.15em'
+                textShadow: `0 0 30px ${theme.shadow}, 0 0 60px ${theme.glow}, 2px 2px 4px rgba(0,0,0,0.8)`,
+                boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}, 0 4px 20px rgba(0,0,0,0.5)`,
+                letterSpacing: '0.2em',
+                borderRadius: '0',
+                clipPath: 'polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%)',
+                fontFamily: "'Green Mind', sans-serif"
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.05)';
