@@ -1,26 +1,25 @@
-````markdown name=README.md
-```markdown
-# JAYK47 — Demo
+````markdown name=DONTREADME.md
+JAYK OFFICIAL ARTIST WEBSITE
 
-This commit adds a React component that bundles the DecryptedText, SequentialTextCursor, ChromaGrid and BubbleMenu UI and mounts it on an Astro page.
+VIBE CODED BY JAYK HIMSELF
 
-How to run locally:
+THIS IS MY FIRST TIME CODING (kinda) SO IM A LITTLE LOST BUT WERE GOING WITH IT, IT LOOKS NICE. 
 
-1. Install dependencies:
 
-   npm install
+UPDATES DONE
 
-2. Run dev server:
+Update 0.1
+- Simple UI with Spotify link and contact page.
+Update 0.2
+- buttons for different pages (Music, Contact, Home), Light mode/Dark mode switch
+Update 0.3
+- Custom buttons all around, new fancy CSS shit, and like a cool button I found that is CSS.
+Update 0.9
+- Different colored themes, neon aesthetic on all themes.
+Update 1.0
+I'm NOT GONNA LIE I DIDN'T DO SHIT HERE, JUST LINK CHANGES AND SOME LITTLE TWEAKS AND FIXES WITH THE MOTION OF BUTTONS, AND OH I ADDED THE MENU BUTTON
 
-   npm run dev
+UPDATES LEFT:
 
-The important dependencies are:
-- astro
-- @astrojs/react
-- react
-- react-dom
-- framer-motion
-
-Use `npm run build` to build for production.
-```
+- ADD GAMES TO GET SNIPPETS, MAKE IT MORE INTERACTIVE
 ````
