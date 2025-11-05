@@ -280,134 +280,6 @@ function SequentialTextCursor({
   );
 }
 
-// ChromaGrid Component
-function ChromaGrid({ items, radius = 300, damping = 0.45, fadeOut = 0.6 }) {
-  const rootRef = useRef(null);
-  const fadeRef = useRef(null);
-  const pos = useRef({ x: 0, y: 0 });
-  const targetPos = useRef({ x: 0, y: 0 });
-  const animationFrame = useRef(null);
-
-  const data = items || [];
-
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const { width, height } = el.getBoundingClientRect();
-    pos.current = { x: width / 2, y: height / 2 };
-    targetPos.current = { x: width / 2, y: height / 2 };
-  }, []);
-
-  const animate = () => {
-    const dx = targetPos.current.x - pos.current.x;
-    const dy = targetPos.current.y - pos.current.y;
-    pos.current.x += dx * (1 - damping);
-    pos.current.y += dy * (1 - damping);
-    
-    if (rootRef.current) {
-      rootRef.current.style.setProperty('--x', `${pos.current.x}px`);
-      rootRef.current.style.setProperty('--y', `${pos.current.y}px`);
-    }
-    
-    animationFrame.current = requestAnimationFrame(animate);
-  };
-
-  useEffect(() => {
-    animationFrame.current = requestAnimationFrame(animate);
-    return () => {
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-    };
-  }, []);
-
-  const handleMove = e => {
-    const r = rootRef.current.getBoundingClientRect();
-    targetPos.current.x = e.clientX - r.left;
-    targetPos.current.y = e.clientY - r.top;
-    if (fadeRef.current) {
-      fadeRef.current.style.opacity = '0';
-    }
-  };
-
-  const handleLeave = () => {
-    if (fadeRef.current) {
-      fadeRef.current.style.opacity = '1';
-    }
-  };
-
-  const handleCardMove = e => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    card.style.setProperty('--mouse-x', `${x}px`);
-    card.style.setProperty('--mouse-y', `${y}px`);
-  };
-
-  return (
-    <div
-      ref={rootRef}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '1.5rem',
-        padding: '2rem',
-        '--x': '50%',
-        '--y': '50%',
-        '--r': `${radius}px`
-      }}
-      onPointerMove={handleMove}
-      onPointerLeave={handleLeave}
-    >
-      {data.map((c, i) => (
-        <article
-          key={i}
-          onMouseMove={handleCardMove}
-          onClick={() => c.url && window.open(c.url, '_blank', 'noopener,noreferrer')}
-          style={{
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            borderRadius: '20px',
-            overflow: 'hidden',
-            border: '1px solid #333',
-            background: c.gradient,
-            cursor: c.url ? 'pointer' : 'default',
-            transition: 'border-color 0.3s ease',
-            '--mouse-x': '50%',
-            '--mouse-y': '50%',
-            '--card-border': c.borderColor || 'transparent'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = c.borderColor;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = '#333';
-          }}
-        >
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.15), transparent 70%)', pointerEvents: 'none', opacity: 0, transition: 'opacity 0.3s' }} 
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-          />
-          <div style={{ width: '100%', aspectRatio: '1', overflow: 'hidden' }}>
-            <img src={c.image} alt={c.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-          <footer style={{ padding: '1.5rem', color: 'white' }}>
-            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold' }}>{c.title}</h3>
-            {c.handle && <span style={{ fontSize: '0.875rem', color: '#999' }}>{c.handle}</span>}
-            <p style={{ margin: '0.5rem 0 0 0', fontSize: '1rem' }}>{c.subtitle}</p>
-          </footer>
-        </article>
-      ))}
-      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(circle var(--r) at var(--x) var(--y), transparent 0%, rgba(0, 0, 0, 0.8) 100%)`, pointerEvents: 'none', transition: 'opacity 0.25s' }} />
-      <div ref={fadeRef} style={{ position: 'absolute', inset: 0, background: 'rgba(0, 0, 0, 0.4)', pointerEvents: 'none', transition: `opacity ${fadeOut}s` }} />
-    </div>
-  );
-}
-
 // BubbleMenu Component
 function BubbleMenu({ items, onNavigate }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -558,7 +430,7 @@ export default function App() {
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
             <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
-            <a
+            
               href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
               target="_blank"
               rel="noopener noreferrer"
@@ -595,9 +467,6 @@ export default function App() {
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-8">
             <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
-            <div className="absolute inset-0" style={{ background: '#000' }}>
-              <ChromaGrid items={[]} radius={400} damping={0.45} fadeOut={0.6} />
-            </div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10 pointer-events-none">
               <div className="text-6xl font-black mb-8 px-12 py-6 rounded-3xl inline-block pointer-events-auto"
                 style={{
@@ -615,7 +484,7 @@ export default function App() {
                   sequential={true}
                 />
               </div>
-              <a
+              
                 href="mailto:JAYK47MGMT@GMAIL.COM"
                 className="text-4xl font-bold transition-all duration-300 no-underline inline-block px-10 py-4 rounded-full pointer-events-auto"
                 style={{
