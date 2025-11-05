@@ -11,6 +11,18 @@ import App from '../components/App.jsx';
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>JAYK47</title>
+  
+  <!-- Green Mind Font (You'll need to upload the font file to your public folder) -->
+  <style>
+    @font-face {
+      font-family: 'Green Mind';
+      src: url('/GREEN MIND___.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+  
   <style is:global>
     * {
       margin: 0;
@@ -23,7 +35,7 @@ import App from '../components/App.jsx';
       margin: 0;
       padding: 0;
       overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      font-family: 'Green Mind', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       background: #000;
@@ -38,34 +50,39 @@ import App from '../components/App.jsx';
       overflow: hidden;
     }
 
-    /* Custom scrollbar */
+    /* Custom scrollbar with cryptic style */
     ::-webkit-scrollbar {
-      width: 8px;
+      width: 10px;
     }
 
     ::-webkit-scrollbar-track {
       background: #000;
+      border-left: 1px solid #DC0000;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #DC0000;
-      border-radius: 4px;
-      transition: background 0.3s ease;
+      background: linear-gradient(180deg, #DC0000, #8B0000);
+      border-radius: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(220, 0, 0, 0.8);
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: #FF0000;
+      background: linear-gradient(180deg, #FF0000, #DC0000);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 1);
     }
 
-    /* Selection color */
+    /* Selection color with distorted feel */
     ::selection {
       background: #DC0000;
       color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
 
     ::-moz-selection {
       background: #DC0000;
       color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     }
 
     /* Disable text selection on interactive elements */
@@ -77,7 +94,7 @@ import App from '../components/App.jsx';
       -webkit-touch-callout: none;
     }
 
-    /* Smooth transitions for all elements */
+    /* Cryptic glitch transitions */
     * {
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -103,27 +120,93 @@ import App from '../components/App.jsx';
       height: 100%;
     }
 
-    /* Enhanced neon glow effects */
-    @keyframes neonPulse {
+    /* Enhanced cryptic neon glow effects */
+    @keyframes crypticPulse {
       0%, 100% {
-        filter: brightness(1) drop-shadow(0 0 10px currentColor);
+        filter: brightness(1) drop-shadow(0 0 15px currentColor) contrast(1.2);
+        text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
       }
       50% {
-        filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+        filter: brightness(1.3) drop-shadow(0 0 25px currentColor) contrast(1.4);
+        text-shadow: 0 0 30px currentColor, 0 0 60px currentColor, 0 0 80px currentColor;
       }
     }
 
-    /* Smooth gradient animations */
-    @keyframes gradientShift {
+    /* Distorted gradient animations */
+    @keyframes distortedGradient {
       0% {
         background-position: 0% 50%;
+        filter: hue-rotate(0deg) brightness(1);
       }
-      50% {
+      33% {
         background-position: 100% 50%;
+        filter: hue-rotate(5deg) brightness(1.1);
+      }
+      66% {
+        background-position: 50% 100%;
+        filter: hue-rotate(-5deg) brightness(0.9);
       }
       100% {
         background-position: 0% 50%;
+        filter: hue-rotate(0deg) brightness(1);
       }
+    }
+
+    /* Glitch effect for cryptic feel */
+    @keyframes glitchEffect {
+      0%, 100% {
+        transform: translate(0);
+      }
+      20% {
+        transform: translate(-2px, 2px);
+      }
+      40% {
+        transform: translate(-2px, -2px);
+      }
+      60% {
+        transform: translate(2px, 2px);
+      }
+      80% {
+        transform: translate(2px, -2px);
+      }
+    }
+
+    /* Cryptic scan line effect */
+    @keyframes scanLine {
+      0% {
+        top: 0%;
+      }
+      100% {
+        top: 100%;
+      }
+    }
+
+    /* Add scan line overlay for cryptic effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(transparent, rgba(220, 0, 0, 0.3), transparent);
+      animation: scanLine 8s linear infinite;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Add grain texture overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 9998;
     }
 
     /* Mobile font sizing */
@@ -163,8 +246,8 @@ import App from '../components/App.jsx';
     /* Smooth backdrop blur support */
     @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
       .backdrop-blur {
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px) saturate(180%);
+        -webkit-backdrop-filter: blur(10px) saturate(180%);
       }
     }
 
@@ -188,9 +271,34 @@ import App from '../components/App.jsx';
     button:active, a:active {
       will-change: transform;
     }
+
+    /* Cryptic letter spacing */
+    h1, h2, h3, button, a {
+      letter-spacing: 0.15em;
+      font-weight: normal;
+    }
+
+    /* Add subtle vignette effect */
+    #root {
+      position: relative;
+    }
+
+    #root::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
-  <App client:load />
+  <div id="root">
+    <App client:load />
+  </div>
 </body>
 </html>
