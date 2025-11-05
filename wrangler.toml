@@ -1,0 +1,5 @@
+name = "jayk47-astro-site"
+compatibility_date = "2025-11-05"
+
+[assets]
+directory = "./dist"
