@@ -1,8 +1,15 @@
 ---
-import Base from '../layouts/Base.astro';
+import App from '../components/App.jsx';
 ---
-<Base title="JAYK47 — Home">
-  <h1>Welcome to JAYK47</h1>
-  <p>If you see this, the Astro dev server is serving pages correctly.</p>
-  <p>Next steps: add more pages in src/pages and components in src/components.</p>
-</Base>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JAYK47</title>
+</head>
+<body style="margin: 0; padding: 0; overflow: hidden;">
+  <App client:load />
+</body>
+</html>
