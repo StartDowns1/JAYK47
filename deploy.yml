@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'pnpm'
 
       # 3. Setup pnpm
@@ -31,7 +31,7 @@ jobs:
         with:
           version: 10
 
-      # 4. Install dependencies (fixes the frozen-lockfile error)
+      # 4. Install dependencies (FIXED - removed frozen-lockfile)
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
