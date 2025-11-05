@@ -34,3 +34,8 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
+
+        name: No Frozen lock
+        run: pnpm install --no-frozen-lockfile
+
+
