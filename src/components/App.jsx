@@ -432,6 +432,7 @@ function SequentialTextCursor({
                 whiteSpace: 'nowrap', 
                 fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
                 fontWeight: 'bold',
+                fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
                 color: theme.primary,
                 textShadow: `0 0 20px ${theme.shadow}, 0 0 40px ${theme.glow}`,
                 filter: `drop-shadow(0 0 10px ${theme.shadow})`
@@ -524,7 +525,8 @@ function BubbleMenu({ items, onNavigate, theme }) {
                     borderColor: theme.border,
                     color: theme.text,
                     boxShadow: `0 0 30px ${theme.shadow}`,
-                    letterSpacing: '0.1em'
+                    letterSpacing: '0.1em',
+                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'scale(1.05)';
@@ -588,7 +590,7 @@ export default function App() {
                 letterSpacing: '0.2em',
                 borderRadius: '0',
                 clipPath: 'polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%)',
-                fontFamily: "'Green Mind', sans-serif"
+                fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.05)';
@@ -613,50 +615,6 @@ export default function App() {
           <div className="w-full h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden p-4">
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
-            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
-              {['J', 'A', 'Y', 'K'].map((letter, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 100, rotateX: -90 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                  transition={{ 
-                    delay: i * 0.2,
-                    type: 'spring',
-                    stiffness: 150,
-                    damping: 20,
-                    duration: 0.8
-                  }}
-                  className="inline-block px-6 py-4 md:px-10 md:py-8 border-2 md:border-4 rounded-2xl md:rounded-3xl"
-                  style={{
-                    fontSize: 'clamp(4rem, 15vw, 9rem)',
-                    fontWeight: '900',
-                    color: theme.text,
-                    background: theme.secondary,
-                    borderColor: theme.border,
-                    boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
-                    letterSpacing: '0.05em',
-                    textShadow: `0 0 20px ${theme.shadow}`
-                  }}
-                >
-                  <DecryptedText
-                    text={letter}
-                    animateOn="view"
-                    speed={50}
-                    maxIterations={20}
-                    sequential={true}
-                    revealDirection="center"
-                  />
-                </motion.span>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'music':
-        return (
-          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
-            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
-            <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <a
               href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
               target="_blank"
@@ -670,7 +628,8 @@ export default function App() {
                 boxShadow: '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)',
                 transition: 'all 0.5s ease',
                 letterSpacing: '0.1em',
-                textShadow: '0 0 20px rgba(29, 185, 84, 0.8)'
+                textShadow: '0 0 20px rgba(29, 185, 84, 0.8)',
+                fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.05)';
@@ -711,7 +670,8 @@ export default function App() {
                   borderColor: theme.border,
                   boxShadow: `0 0 50px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
                   letterSpacing: '0.1em',
-                  textShadow: `0 0 20px ${theme.shadow}`
+                  textShadow: `0 0 20px ${theme.shadow}`,
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
                 }}
               >
                 <DecryptedText
@@ -733,7 +693,8 @@ export default function App() {
                   borderColor: theme.border,
                   boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`,
                   letterSpacing: '0.05em',
-                  maxWidth: '90vw'
+                  maxWidth: '90vw',
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
@@ -780,4 +741,49 @@ export default function App() {
   }, []);
 
   return <div className="w-full h-screen overflow-hidden">{renderPage()}</div>;
-}
+} theme={theme} />
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
+              {['J', 'A', 'Y', 'K'].map((letter, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 100, rotateX: -90 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{ 
+                    delay: i * 0.2,
+                    type: 'spring',
+                    stiffness: 150,
+                    damping: 20,
+                    duration: 0.8
+                  }}
+                  className="inline-block px-6 py-4 md:px-10 md:py-8 border-2 md:border-4 rounded-2xl md:rounded-3xl"
+                  style={{
+                    fontSize: 'clamp(4rem, 15vw, 9rem)',
+                    fontWeight: '900',
+                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
+                    color: theme.text,
+                    background: theme.secondary,
+                    borderColor: theme.border,
+                    boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
+                    letterSpacing: '0.05em',
+                    textShadow: `0 0 20px ${theme.shadow}`
+                  }}
+                >
+                  <DecryptedText
+                    text={letter}
+                    animateOn="view"
+                    speed={50}
+                    maxIterations={20}
+                    sequential={true}
+                    revealDirection="center"
+                  />
+                </motion.span>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'music':
+        return (
+          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
+            <BubbleMenu items={menuItems} onNavigate={handleNavigate}
