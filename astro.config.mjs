@@ -5,5 +5,3 @@ export default defineConfig({
   integrations: [react()],
   output: 'static'
 });
-```
-
