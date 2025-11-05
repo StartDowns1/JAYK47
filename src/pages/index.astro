@@ -12,14 +12,22 @@ import App from '../components/App.jsx';
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>JAYK47</title>
   
-  <!-- Green Mind Font (You'll need to upload the font file to your public folder) -->
+  <!-- Green Mind Font -->
   <style>
     @font-face {
       font-family: 'Green Mind';
-      src: url('/GREEN MIND___.ttf') format('truetype');
+      src: url('/fonts/GREEN MIND___.ttf') format('truetype');
       font-weight: normal;
       font-style: normal;
       font-display: swap;
+    }
+
+    /* Fallback if font doesn't load */
+    @font-face {
+      font-family: 'Green Mind';
+      src: local('Impact'), local('Arial Black');
+      font-weight: normal;
+      font-style: normal;
     }
   </style>
   
@@ -35,7 +43,7 @@ import App from '../components/App.jsx';
       margin: 0;
       padding: 0;
       overflow: hidden;
-      font-family: 'Green Mind', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      font-family: 'Green Mind', 'Impact', 'Arial Black', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       background: #000;
