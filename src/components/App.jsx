@@ -91,11 +91,11 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
   if (isMenuOpen) return null;
 
   return (
-    <div className="fixed top-8 left-8 z-50">
+    <div className="fixed top-4 left-4 md:top-8 md:left-8 z-50">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full flex items-center justify-center border-4 cursor-pointer transition-all duration-500"
+        className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center border-4 cursor-pointer transition-all duration-500"
         style={{
           background: themes[currentTheme].secondary,
           borderColor: themes[currentTheme].border,
@@ -103,7 +103,7 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
         }}
       >
         <div
-          className="w-8 h-8 rounded-full"
+          className="w-6 h-6 md:w-8 md:h-8 rounded-full"
           style={{
             background: themes[currentTheme].gradient,
             boxShadow: `0 0 10px ${themes[currentTheme].shadow}`
@@ -118,7 +118,7 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="absolute top-20 left-0 flex flex-col gap-3 p-4 rounded-3xl border-2"
+            className="absolute top-16 md:top-20 left-0 flex flex-col gap-2 md:gap-3 p-3 md:p-4 rounded-3xl border-2"
             style={{
               background: 'rgba(0, 0, 0, 0.95)',
               borderColor: themes[currentTheme].border,
@@ -135,7 +135,7 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
                   onThemeChange(key);
                   setIsOpen(false);
                 }}
-                className="w-10 h-10 rounded-full border-2 cursor-pointer transition-all duration-500"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 cursor-pointer transition-all duration-500"
                 style={{
                   background: themes[key].gradient,
                   borderColor: currentTheme === key ? '#fff' : themes[key].border,
@@ -315,7 +315,9 @@ function DecryptedText({
     animateOn === 'hover' || animateOn === 'both'
       ? {
           onMouseEnter: () => setIsHovering(true),
-          onMouseLeave: () => setIsHovering(false)
+          onMouseLeave: () => setIsHovering(false),
+          onTouchStart: () => setIsHovering(true),
+          onTouchEnd: () => setIsHovering(false)
         }
       : {};
 
@@ -412,7 +414,7 @@ function SequentialTextCursor({
   }, [removalInterval]);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative' }}>
+    <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none' }}>
         <AnimatePresence>
           {trail.map(item => (
@@ -428,7 +430,7 @@ function SequentialTextCursor({
                 top: item.y, 
                 userSelect: 'none', 
                 whiteSpace: 'nowrap', 
-                fontSize: '2.5rem',
+                fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
                 fontWeight: 'bold',
                 color: theme.primary,
                 textShadow: `0 0 20px ${theme.shadow}, 0 0 40px ${theme.glow}`,
@@ -462,7 +464,7 @@ function BubbleMenu({ items, onNavigate, theme }) {
     <>
       <button
         type="button"
-        className="fixed top-8 right-8 w-16 h-16 rounded-full flex flex-col items-center justify-center border-2 cursor-pointer z-50 transition-all duration-500"
+        className="fixed top-4 right-4 md:top-8 md:right-8 w-12 h-12 md:w-16 md:h-16 rounded-full flex flex-col items-center justify-center border-2 cursor-pointer z-50 transition-all duration-500"
         style={{
           background: theme.secondary,
           borderColor: theme.border,
@@ -481,11 +483,11 @@ function BubbleMenu({ items, onNavigate, theme }) {
         }}
       >
         <span 
-          className={`w-8 h-0.5 rounded transition-all duration-500 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`}
+          className={`w-6 md:w-8 h-0.5 rounded transition-all duration-500 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`}
           style={{ background: theme.text }}
         />
         <span 
-          className={`w-8 h-0.5 rounded mt-2 transition-all duration-500 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}
+          className={`w-6 md:w-8 h-0.5 rounded mt-1.5 md:mt-2 transition-all duration-500 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}
           style={{ background: theme.text }}
         />
       </button>
@@ -500,7 +502,7 @@ function BubbleMenu({ items, onNavigate, theme }) {
             className="fixed inset-0 flex items-center justify-center z-40"
             style={{ background: 'rgba(0, 0, 0, 0.95)' }}
           >
-            <div className="flex flex-col gap-8 p-6">
+            <div className="flex flex-col gap-4 md:gap-8 p-4 md:p-6">
               {items.map((item, idx) => (
                 <motion.a
                   key={idx}
@@ -516,7 +518,7 @@ function BubbleMenu({ items, onNavigate, theme }) {
                     damping: 25,
                     duration: 0.6
                   }}
-                  className="px-20 py-8 text-6xl font-black rounded-full text-white border-4 flex items-center justify-center transition-all duration-500 no-underline"
+                  className="px-8 py-4 md:px-20 md:py-8 text-4xl md:text-6xl font-black rounded-full text-white border-4 flex items-center justify-center transition-all duration-500 no-underline"
                   style={{
                     backgroundColor: theme.secondary,
                     borderColor: theme.border,
@@ -576,8 +578,9 @@ export default function App() {
             <SequentialTextCursor spacing={80} maxPoints={15} theme={theme} />
             <button
               onClick={() => setCurrentPage('home')}
-              className="text-white text-9xl font-black tracking-wider cursor-pointer bg-transparent border-8 px-16 py-8 z-10 transition-all duration-500 rounded-full"
+              className="text-white font-black tracking-wider cursor-pointer bg-transparent border-4 md:border-8 z-10 transition-all duration-500 rounded-full px-8 py-4 md:px-16 md:py-8"
               style={{
+                fontSize: 'clamp(3rem, 12vw, 9rem)',
                 borderColor: theme.border,
                 color: theme.text,
                 textShadow: `0 0 30px ${theme.shadow}, 0 0 60px ${theme.glow}`,
@@ -604,10 +607,10 @@ export default function App() {
 
       case 'home':
         return (
-          <div className="w-full h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden">
+          <div className="w-full h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden p-4">
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
-            <div className="flex items-center justify-center gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
               {['J', 'A', 'Y', 'K'].map((letter, i) => (
                 <motion.span
                   key={i}
@@ -620,9 +623,9 @@ export default function App() {
                     damping: 20,
                     duration: 0.8
                   }}
-                  className="inline-block px-10 py-8 border-4 rounded-3xl"
+                  className="inline-block px-6 py-4 md:px-10 md:py-8 border-2 md:border-4 rounded-2xl md:rounded-3xl"
                   style={{
-                    fontSize: '9rem',
+                    fontSize: 'clamp(4rem, 15vw, 9rem)',
                     fontWeight: '900',
                     color: theme.text,
                     background: theme.secondary,
@@ -648,15 +651,16 @@ export default function App() {
 
       case 'music':
         return (
-          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
+          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <a
               href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-7xl font-black cursor-pointer no-underline z-10 px-20 py-10 border-4 rounded-full"
+              className="font-black cursor-pointer no-underline z-10 px-8 py-4 md:px-20 md:py-10 border-2 md:border-4 rounded-full text-center"
               style={{
+                fontSize: 'clamp(1.5rem, 6vw, 4.5rem)',
                 color: '#fff',
                 background: '#000',
                 borderColor: '#1db954',
@@ -692,12 +696,13 @@ export default function App() {
 
       case 'contact':
         return (
-          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-8">
+          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4 md:p-8">
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10 pointer-events-none">
-              <div className="text-7xl font-black mb-12 px-16 py-8 border-4 inline-block pointer-events-auto rounded-full"
+            <div className="text-center z-10 max-w-full">
+              <div className="font-black mb-6 md:mb-12 px-8 py-4 md:px-16 md:py-8 border-2 md:border-4 inline-block rounded-2xl md:rounded-full"
                 style={{
+                  fontSize: 'clamp(2rem, 8vw, 4.5rem)',
                   color: theme.text,
                   background: theme.secondary,
                   borderColor: theme.border,
@@ -717,13 +722,15 @@ export default function App() {
               
               <a
                 href="mailto:JAYK47MGMT@GMAIL.COM"
-                className="text-4xl font-bold transition-all duration-500 no-underline inline-block px-12 py-6 border-4 pointer-events-auto rounded-full"
+                className="font-bold transition-all duration-500 no-underline inline-block px-6 py-3 md:px-12 md:py-6 border-2 md:border-4 rounded-2xl md:rounded-full break-all"
                 style={{
+                  fontSize: 'clamp(1rem, 4vw, 2.5rem)',
                   color: theme.text,
                   background: theme.secondary,
                   borderColor: theme.border,
                   boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`,
-                  letterSpacing: '0.05em'
+                  letterSpacing: '0.05em',
+                  maxWidth: '90vw'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
@@ -756,7 +763,7 @@ export default function App() {
 
   useEffect(() => {
     const checkMenuOpen = () => {
-      const menuButton = document.querySelector('.fixed.top-8.right-8');
+      const menuButton = document.querySelector('.fixed.top-4.right-4, .fixed.md\\:top-8.md\\:right-8');
       if (menuButton) {
         const isOpen = menuButton.querySelector('span')?.classList.contains('rotate-45');
         setIsMenuOpen(isOpen || false);
