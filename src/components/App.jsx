@@ -267,8 +267,9 @@ function SequentialTextCursor({
                 whiteSpace: 'nowrap', 
                 fontSize: '2.5rem',
                 fontWeight: 'bold',
-                color: '#ff6b6b',
-                textShadow: '0 0 10px rgba(255, 107, 107, 0.5)'
+                color: '#DC0000',
+                textShadow: '0 0 20px rgba(220, 0, 0, 0.8), 0 0 40px rgba(220, 0, 0, 0.5)',
+                filter: 'drop-shadow(0 0 10px rgba(220, 0, 0, 0.9))'
               }}
             >
               {item.letter}
@@ -298,16 +299,26 @@ function BubbleMenu({ items, onNavigate }) {
     <>
       <button
         type="button"
-        className="fixed top-8 right-8 w-14 h-14 rounded-full bg-white shadow-2xl flex flex-col items-center justify-center border-none cursor-pointer z-50"
+        className="fixed top-8 right-8 w-16 h-16 rounded-none flex flex-col items-center justify-center border-2 cursor-pointer z-50 transition-all duration-300"
         style={{
-          backdropFilter: 'blur(10px)',
-          background: 'rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
+          background: '#000',
+          borderColor: '#DC0000',
+          boxShadow: '0 0 20px rgba(220, 0, 0, 0.5), inset 0 0 10px rgba(220, 0, 0, 0.2)'
         }}
         onClick={handleToggle}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#DC0000';
+          e.currentTarget.style.borderColor = '#fff';
+          e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 0, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.3)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#000';
+          e.currentTarget.style.borderColor = '#DC0000';
+          e.currentTarget.style.boxShadow = '0 0 20px rgba(220, 0, 0, 0.5), inset 0 0 10px rgba(220, 0, 0, 0.2)';
+        }}
       >
-        <span className={`w-7 h-0.5 bg-black rounded transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-        <span className={`w-7 h-0.5 bg-black rounded mt-1.5 transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`} />
+        <span className={`w-8 h-0.5 bg-white rounded transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`} />
+        <span className={`w-8 h-0.5 bg-white rounded mt-2 transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`} />
       </button>
 
       <AnimatePresence>
@@ -316,31 +327,43 @@ function BubbleMenu({ items, onNavigate }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3 }}
             className="fixed inset-0 flex items-center justify-center z-40"
-            style={{ background: 'rgba(0, 0, 0, 0.8)', backdropFilter: 'blur(10px)' }}
+            style={{ background: 'rgba(0, 0, 0, 0.95)' }}
           >
-            <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-8 p-6">
               {items.map((item, idx) => (
                 <motion.a
                   key={idx}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.page)}
-                  initial={{ scale: 0, opacity: 0, y: 20 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  exit={{ scale: 0, opacity: 0 }}
+                  initial={{ scale: 0, opacity: 0, x: -100 }}
+                  animate={{ scale: 1, opacity: 1, x: 0 }}
+                  exit={{ scale: 0, opacity: 0, x: 100 }}
                   transition={{ 
-                    delay: idx * 0.05,
+                    delay: idx * 0.1,
                     type: 'spring',
-                    stiffness: 400,
-                    damping: 25
+                    stiffness: 300,
+                    damping: 20
                   }}
-                  className="px-16 py-6 text-5xl font-bold rounded-full text-white shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 no-underline"
+                  className="px-20 py-8 text-6xl font-black rounded-none text-white border-4 flex items-center justify-center transition-all duration-300 no-underline"
                   style={{
-                    backgroundColor: item.hoverStyles?.bgColor || '#ff6b6b',
-                    color: item.hoverStyles?.textColor || '#fff',
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                    backgroundColor: '#000',
+                    borderColor: '#DC0000',
+                    boxShadow: '0 0 30px rgba(220, 0, 0, 0.6)',
+                    letterSpacing: '0.1em'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.backgroundColor = '#DC0000';
+                    e.currentTarget.style.borderColor = '#fff';
+                    e.currentTarget.style.boxShadow = '0 0 50px rgba(220, 0, 0, 1), inset 0 0 20px rgba(255, 255, 255, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = '#000';
+                    e.currentTarget.style.borderColor = '#DC0000';
+                    e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 0, 0, 0.6)';
                   }}
                 >
                   {item.label}
@@ -359,9 +382,9 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
 
   const menuItems = [
-    { label: 'HOME', href: '#home', page: 'home', hoverStyles: { bgColor: '#ff6b6b', textColor: '#ffffff' } },
-    { label: 'MUSIC', href: '#music', page: 'music', hoverStyles: { bgColor: '#ff8787', textColor: '#ffffff' } },
-    { label: 'CONTACT', href: '#contact', page: 'contact', hoverStyles: { bgColor: '#ffa5a5', textColor: '#ffffff' } }
+    { label: 'HOME', href: '#home', page: 'home' },
+    { label: 'MUSIC', href: '#music', page: 'music' },
+    { label: 'CONTACT', href: '#contact', page: 'contact' }
   ];
 
   const renderPage = () => {
@@ -369,24 +392,30 @@ export default function App() {
       case 'landing':
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
-            <SequentialTextCursor spacing={80} maxPoints={12} />
+            <SequentialTextCursor spacing={80} maxPoints={15} />
             <button
               onClick={() => setCurrentPage('home')}
-              className="text-white text-9xl font-black tracking-wider cursor-pointer bg-transparent border-none z-10"
+              className="text-white text-9xl font-black tracking-wider cursor-pointer bg-transparent border-8 px-16 py-8 z-10 transition-all duration-300"
               style={{
-                textShadow: '0 0 20px rgba(255, 107, 107, 0.5)',
-                transition: 'all 0.3s ease'
+                borderColor: '#DC0000',
+                textShadow: '0 0 30px rgba(220, 0, 0, 0.8), 0 0 60px rgba(220, 0, 0, 0.5)',
+                boxShadow: '0 0 40px rgba(220, 0, 0, 0.6), inset 0 0 30px rgba(220, 0, 0, 0.2)',
+                letterSpacing: '0.15em'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.1)';
-                e.currentTarget.style.color = '#ff6b6b';
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.backgroundColor = '#DC0000';
+                e.currentTarget.style.borderColor = '#fff';
+                e.currentTarget.style.boxShadow = '0 0 60px rgba(220, 0, 0, 1), inset 0 0 40px rgba(255, 255, 255, 0.3)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = '#DC0000';
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(220, 0, 0, 0.6), inset 0 0 30px rgba(220, 0, 0, 0.2)';
               }}
             >
-              <DecryptedText text="ENTER" animateOn="hover" speed={30} maxIterations={40} />
+              <DecryptedText text="ENTER" animateOn="hover" speed={25} maxIterations={50} />
             </button>
           </div>
         );
@@ -395,28 +424,35 @@ export default function App() {
         return (
           <div className="w-full h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden">
             <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center gap-6">
               {['J', 'A', 'Y', 'K'].map((letter, i) => (
                 <motion.span
                   key={i}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.2 }}
-                  className="inline-block mx-4 px-8 py-6 rounded-3xl"
+                  initial={{ opacity: 0, y: 100, rotateX: -90 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{ 
+                    delay: i * 0.15,
+                    type: 'spring',
+                    stiffness: 200,
+                    damping: 15
+                  }}
+                  className="inline-block px-10 py-8 border-4"
                   style={{
-                    fontSize: '8rem',
+                    fontSize: '9rem',
                     fontWeight: '900',
                     color: '#fff',
-                    background: 'linear-gradient(145deg, #ff6b6b, #ff8787)',
-                    boxShadow: '0 20px 60px rgba(255, 107, 107, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                    backdropFilter: 'blur(10px)'
+                    background: '#000',
+                    borderColor: '#DC0000',
+                    boxShadow: '0 0 40px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)',
+                    letterSpacing: '0.05em',
+                    textShadow: '0 0 20px rgba(220, 0, 0, 0.8)'
                   }}
                 >
                   <DecryptedText
                     text={letter}
                     animateOn="view"
-                    speed={40}
-                    maxIterations={20}
+                    speed={35}
+                    maxIterations={25}
                     sequential={true}
                     revealDirection="center"
                   />
@@ -430,32 +466,38 @@ export default function App() {
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
             <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
-            
+            <a
               href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-7xl font-black cursor-pointer no-underline z-10 px-16 py-8 rounded-full"
+              className="text-7xl font-black cursor-pointer no-underline z-10 px-20 py-10 border-4"
               style={{
                 color: '#fff',
-                background: 'linear-gradient(145deg, #1db954, #1ed760)',
-                boxShadow: '0 20px 60px rgba(29, 185, 84, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(10px)',
-                transition: 'all 0.5s ease'
+                background: '#000',
+                borderColor: '#DC0000',
+                boxShadow: '0 0 50px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)',
+                transition: 'all 0.3s ease',
+                letterSpacing: '0.1em',
+                textShadow: '0 0 20px rgba(220, 0, 0, 0.8)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.1)';
-                e.currentTarget.style.boxShadow = '0 30px 80px rgba(29, 185, 84, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.backgroundColor = '#DC0000';
+                e.currentTarget.style.borderColor = '#fff';
+                e.currentTarget.style.boxShadow = '0 0 70px rgba(220, 0, 0, 1), inset 0 0 40px rgba(255, 255, 255, 0.3)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = '0 20px 60px rgba(29, 185, 84, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.backgroundColor = '#000';
+                e.currentTarget.style.borderColor = '#DC0000';
+                e.currentTarget.style.boxShadow = '0 0 50px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)';
               }}
             >
               <DecryptedText
                 text="LISTEN ON SPOTIFY"
                 animateOn="both"
-                speed={25}
-                maxIterations={25}
+                speed={20}
+                maxIterations={30}
                 sequential={true}
                 revealDirection="center"
               />
@@ -468,45 +510,53 @@ export default function App() {
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-8">
             <BubbleMenu items={menuItems} onNavigate={setCurrentPage} />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10 pointer-events-none">
-              <div className="text-6xl font-black mb-8 px-12 py-6 rounded-3xl inline-block pointer-events-auto"
+              <div className="text-7xl font-black mb-12 px-16 py-8 border-4 inline-block pointer-events-auto"
                 style={{
                   color: '#fff',
-                  background: 'linear-gradient(145deg, #ff6b6b, #ff8787)',
-                  boxShadow: '0 20px 60px rgba(255, 107, 107, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(10px)'
+                  background: '#000',
+                  borderColor: '#DC0000',
+                  boxShadow: '0 0 50px rgba(220, 0, 0, 0.8), inset 0 0 30px rgba(220, 0, 0, 0.3)',
+                  letterSpacing: '0.1em',
+                  textShadow: '0 0 20px rgba(220, 0, 0, 0.8)'
                 }}
               >
                 <DecryptedText
                   text="GET IN TOUCH"
                   animateOn="view"
-                  speed={30}
+                  speed={25}
                   maxIterations={40}
                   sequential={true}
                 />
               </div>
               
+              <a
                 href="mailto:JAYK47MGMT@GMAIL.COM"
-                className="text-4xl font-bold transition-all duration-300 no-underline inline-block px-10 py-4 rounded-full pointer-events-auto"
+                className="text-4xl font-bold transition-all duration-300 no-underline inline-block px-12 py-6 border-4 pointer-events-auto"
                 style={{
                   color: '#fff',
-                  background: 'rgba(0, 0, 0, 0.7)',
-                  boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(10px)'
+                  background: '#000',
+                  borderColor: '#DC0000',
+                  boxShadow: '0 0 30px rgba(220, 0, 0, 0.6), inset 0 0 20px rgba(220, 0, 0, 0.2)',
+                  letterSpacing: '0.05em'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.background = 'linear-gradient(145deg, #ff6b6b, #ff8787)';
+                  e.currentTarget.style.background = '#DC0000';
+                  e.currentTarget.style.borderColor = '#fff';
+                  e.currentTarget.style.boxShadow = '0 0 50px rgba(220, 0, 0, 1), inset 0 0 30px rgba(255, 255, 255, 0.3)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.background = 'rgba(0, 0, 0, 0.7)';
+                  e.currentTarget.style.background = '#000';
+                  e.currentTarget.style.borderColor = '#DC0000';
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(220, 0, 0, 0.6), inset 0 0 20px rgba(220, 0, 0, 0.2)';
                 }}
               >
                 <DecryptedText
                   text="JAYK47MGMT@GMAIL.COM"
                   animateOn="hover"
-                  speed={20}
-                  maxIterations={30}
+                  speed={15}
+                  maxIterations={35}
                 />
               </a>
             </div>
