@@ -6,13 +6,17 @@ import App from '../components/App.jsx';
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>JAYK47</title>
   <style is:global>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
     
     body {
@@ -24,16 +28,19 @@ import App from '../components/App.jsx';
       -moz-osx-font-smoothing: grayscale;
       background: #000;
       color: #fff;
+      touch-action: pan-y;
+      overscroll-behavior: none;
     }
 
     /* Smooth scrolling */
     html {
       scroll-behavior: smooth;
+      overflow: hidden;
     }
 
     /* Custom scrollbar */
     ::-webkit-scrollbar {
-      width: 10px;
+      width: 8px;
     }
 
     ::-webkit-scrollbar-track {
@@ -42,7 +49,7 @@ import App from '../components/App.jsx';
 
     ::-webkit-scrollbar-thumb {
       background: #DC0000;
-      border-radius: 5px;
+      border-radius: 4px;
       transition: background 0.3s ease;
     }
 
@@ -67,6 +74,7 @@ import App from '../components/App.jsx';
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
+      -webkit-touch-callout: none;
     }
 
     /* Smooth transitions for all elements */
@@ -79,6 +87,106 @@ import App from '../components/App.jsx';
       * {
         scroll-behavior: smooth;
       }
+    }
+
+    /* Mobile touch optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      button, a {
+        touch-action: manipulation;
+      }
+    }
+
+    /* Prevent iOS Safari bounce effect */
+    body {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Enhanced neon glow effects */
+    @keyframes neonPulse {
+      0%, 100% {
+        filter: brightness(1) drop-shadow(0 0 10px currentColor);
+      }
+      50% {
+        filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+      }
+    }
+
+    /* Smooth gradient animations */
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Mobile font sizing */
+    @media (max-width: 768px) {
+      html {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      html {
+        font-size: 12px;
+      }
+    }
+
+    /* Improve touch targets for mobile */
+    @media (max-width: 768px) {
+      button, a {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    }
+
+    /* Landscape mobile optimization */
+    @media (max-height: 500px) and (orientation: landscape) {
+      html {
+        font-size: 10px;
+      }
+    }
+
+    /* Prevent text inflation on mobile */
+    body {
+      text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Smooth backdrop blur support */
+    @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+      .backdrop-blur {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+    }
+
+    /* Hardware acceleration for smooth animations */
+    button, a, div {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+
+    /* Remove double-tap zoom on buttons */
+    button {
+      touch-action: manipulation;
+    }
+
+    /* Improve performance on mobile */
+    * {
+      will-change: auto;
+    }
+
+    button:active, a:active {
+      will-change: transform;
     }
   </style>
 </head>
