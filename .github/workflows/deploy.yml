@@ -1,31 +1,51 @@
-name: Deploy Astro site to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [ main ]
-  # Optional: allow manual triggers
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     steps:
-      - name: Checkout code
+      # 1. Checkout your repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      # 2. Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build Astro site
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # 3. Setup pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          version: 10
+
+      # 4. Install dependencies (FIXED - removed frozen-lockfile)
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      # 5. Build the site
+      - name: Build
+        run: pnpm run build
+
+      # 6. Upload build output (Astro outputs to "dist" by default)
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      # 7. Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
