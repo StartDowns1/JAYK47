@@ -3,6 +3,58 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Color themes
 const themes = {
+  pastelBlue: {
+    name: 'Pastel Blue',
+    primary: '#B3D9FF',
+    secondary: '#F0F8FF',
+    text: '#003366',
+    border: '#B3D9FF',
+    shadow: 'rgba(179, 217, 255, 0.6)',
+    glow: 'rgba(179, 217, 255, 0.4)',
+    gradient: 'linear-gradient(145deg, #B3D9FF, #CCE5FF)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#B3D9FF'
+  },
+  pastelPink: {
+    name: 'Pastel Pink',
+    primary: '#FFB3D9',
+    secondary: '#FFF0F7',
+    text: '#660033',
+    border: '#FFB3D9',
+    shadow: 'rgba(255, 179, 217, 0.6)',
+    glow: 'rgba(255, 179, 217, 0.4)',
+    gradient: 'linear-gradient(145deg, #FFB3D9, #FFCCE5)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#FFB3D9'
+  },
+  pastelMint: {
+    name: 'Pastel Mint',
+    primary: '#B3FFD9',
+    secondary: '#F0FFF7',
+    text: '#003322',
+    border: '#B3FFD9',
+    shadow: 'rgba(179, 255, 217, 0.6)',
+    glow: 'rgba(179, 255, 217, 0.4)',
+    gradient: 'linear-gradient(145deg, #B3FFD9, #CCFFE5)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#B3FFD9'
+  },
+  pastelLavender: {
+    name: 'Pastel Lavender',
+    primary: '#D9B3FF',
+    secondary: '#F7F0FF',
+    text: '#330066',
+    border: '#D9B3FF',
+    shadow: 'rgba(217, 179, 255, 0.6)',
+    glow: 'rgba(217, 179, 255, 0.4)',
+    gradient: 'linear-gradient(145deg, #D9B3FF, #E5CCFF)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#D9B3FF'
+  },
   aggressiveRed: {
     name: 'Aggressive Red',
     primary: '#DC0000',
@@ -28,19 +80,6 @@ const themes = {
     spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
     spotifyShadow: 'rgba(29, 185, 84, 0.7)',
     indicator: '#FFB3B3'
-  },
-  pastelBlue: {
-    name: 'Pastel Blue',
-    primary: '#B3D9FF',
-    secondary: '#F0F8FF',
-    text: '#003366',
-    border: '#B3D9FF',
-    shadow: 'rgba(179, 217, 255, 0.6)',
-    glow: 'rgba(179, 217, 255, 0.4)',
-    gradient: 'linear-gradient(145deg, #B3D9FF, #CCE5FF)',
-    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
-    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#B3D9FF'
   },
   aggressiveBlue: {
     name: 'Aggressive Blue',
@@ -555,7 +594,7 @@ function BubbleMenu({ items, onNavigate, theme }) {
 // Main App
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [currentTheme, setCurrentTheme] = useState('aggressiveRed');
+  const [currentTheme, setCurrentTheme] = useState('pastelBlue');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const theme = themes[currentTheme];
@@ -580,29 +619,28 @@ export default function App() {
             <SequentialTextCursor spacing={80} maxPoints={15} theme={theme} />
             <button
               onClick={() => setCurrentPage('home')}
-              className="text-white font-black tracking-wider cursor-pointer bg-transparent border-4 md:border-8 z-10 transition-all duration-500 px-8 py-4 md:px-16 md:py-8"
+              className="text-white font-black tracking-wider cursor-pointer bg-transparent border-4 md:border-4 z-10 transition-all duration-500 px-12 py-4 md:px-20 md:py-6 rounded-full"
               style={{
-                fontSize: 'clamp(3rem, 12vw, 9rem)',
+                fontSize: 'clamp(2.5rem, 10vw, 6rem)',
                 borderColor: theme.border,
                 color: theme.text,
-                textShadow: `0 0 30px ${theme.shadow}, 0 0 60px ${theme.glow}, 2px 2px 4px rgba(0,0,0,0.8)`,
-                boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}, 0 4px 20px rgba(0,0,0,0.5)`,
+                background: theme.secondary,
+                textShadow: `0 0 20px ${theme.shadow}`,
+                boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`,
                 letterSpacing: '0.2em',
-                borderRadius: '0',
-                clipPath: 'polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%)',
                 fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.05)';
                 e.currentTarget.style.background = theme.gradient;
                 e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
-                e.currentTarget.style.boxShadow = `0 0 60px ${theme.shadow}, inset 0 0 40px rgba(255, 255, 255, 0.3)`;
+                e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 30px rgba(255, 255, 255, 0.3)`;
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.background = theme.secondary;
                 e.currentTarget.style.borderColor = theme.border;
-                e.currentTarget.style.boxShadow = `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`;
+                e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`;
               }}
             >
               <DecryptedText text="ENTER" animateOn="hover" speed={40} maxIterations={30} />
@@ -613,6 +651,51 @@ export default function App() {
       case 'home':
         return (
           <div className="w-full h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden p-4">
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
+            <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
+              {['J', 'A', 'Y', 'K'].map((letter, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 100, rotateX: -90 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  transition={{ 
+                    delay: i * 0.2,
+                    type: 'spring',
+                    stiffness: 150,
+                    damping: 20,
+                    duration: 0.8
+                  }}
+                  className="inline-block px-6 py-4 md:px-10 md:py-8 border-2 md:border-4 rounded-2xl md:rounded-3xl"
+                  style={{
+                    fontSize: 'clamp(4rem, 15vw, 9rem)',
+                    fontWeight: '900',
+                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
+                    color: theme.text,
+                    background: theme.secondary,
+                    borderColor: theme.border,
+                    boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
+                    letterSpacing: '0.05em',
+                    textShadow: `0 0 20px ${theme.shadow}`
+                  }}
+                >
+                  <DecryptedText
+                    text={letter}
+                    animateOn="view"
+                    speed={50}
+                    maxIterations={20}
+                    sequential={true}
+                    revealDirection="center"
+                  />
+                </motion.span>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'music':
+        return (
+          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <a
@@ -741,49 +824,4 @@ export default function App() {
   }, []);
 
   return <div className="w-full h-screen overflow-hidden">{renderPage()}</div>;
-} theme={theme} />
-            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
-              {['J', 'A', 'Y', 'K'].map((letter, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 100, rotateX: -90 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                  transition={{ 
-                    delay: i * 0.2,
-                    type: 'spring',
-                    stiffness: 150,
-                    damping: 20,
-                    duration: 0.8
-                  }}
-                  className="inline-block px-6 py-4 md:px-10 md:py-8 border-2 md:border-4 rounded-2xl md:rounded-3xl"
-                  style={{
-                    fontSize: 'clamp(4rem, 15vw, 9rem)',
-                    fontWeight: '900',
-                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
-                    color: theme.text,
-                    background: theme.secondary,
-                    borderColor: theme.border,
-                    boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
-                    letterSpacing: '0.05em',
-                    textShadow: `0 0 20px ${theme.shadow}`
-                  }}
-                >
-                  <DecryptedText
-                    text={letter}
-                    animateOn="view"
-                    speed={50}
-                    maxIterations={20}
-                    sequential={true}
-                    revealDirection="center"
-                  />
-                </motion.span>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'music':
-        return (
-          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
-            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
-            <BubbleMenu items={menuItems} onNavigate={handleNavigate}
+}
