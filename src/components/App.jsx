@@ -189,7 +189,7 @@ function FlakeText({ text, theme, size = 120 }) {
           const opacity = 0.3 + Math.sin(time + normalizedDistance * 5) * 0.2;
           ctx.fillStyle = theme.primary.includes('rgb') 
             ? theme.primary.replace(')', `, ${opacity})`).replace('rgb', 'rgba')
-            : `${theme.primary}${Math.round(opacity * 255).toString(16)}`;
+            : `${theme.primary}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`;
           
           ctx.beginPath();
           ctx.arc(0, 0, cellSize * 0.3, 0, Math.PI * 2);
@@ -261,10 +261,9 @@ function DithrButton({ children, onClick, theme, className = '' }) {
   );
 }
 
-// REFRACT Effect - Distortion wave on hover
+// REFRACT Effect - Distortion wave - ALWAYS ANIMATED
 function RefractText({ text, theme }) {
   const canvasRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
   const animationRef = useRef(null);
   const timeRef = useRef(0);
 
@@ -275,7 +274,7 @@ function RefractText({ text, theme }) {
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     
-    const width = text.length * 60;
+    const width = Math.max(text.length * 60, 400);
     canvas.width = width * dpr;
     canvas.height = 100 * dpr;
     canvas.style.width = `${width}px`;
@@ -294,21 +293,20 @@ function RefractText({ text, theme }) {
       
       letters.forEach((letter, i) => {
         const x = spacing * (i + 1);
-        const offset = isHovered ? Math.sin(time * 3 + i * 0.8) * 8 : 0;
+        const offset = Math.sin(time * 3 + i * 0.8) * 8;
         const y = 50 + offset;
         
         ctx.save();
         ctx.translate(x, y);
         
-        ctx.fillStyle = theme.primary;
-        ctx.globalAlpha = 0.9;
-        ctx.fillText(letter, 0, 0);
+        // Always show refraction layers
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = theme.text;
+        ctx.fillText(letter, offset * 0.5, offset * 0.3);
         
-        if (isHovered) {
-          ctx.globalAlpha = 0.3;
-          ctx.fillStyle = theme.text;
-          ctx.fillText(letter, offset * 0.5, offset * 0.3);
-        }
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = theme.primary;
+        ctx.fillText(letter, 0, 0);
         
         ctx.restore();
       });
@@ -327,16 +325,14 @@ function RefractText({ text, theme }) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [text, theme, isHovered]);
+  }, [text, theme]);
 
   return (
     <canvas
       ref={canvasRef}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       style={{
         filter: `drop-shadow(0 0 20px ${theme.shadow})`,
-        cursor: 'pointer'
+        cursor: 'default'
       }}
     />
   );
@@ -1049,7 +1045,7 @@ export default function App() {
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.backgroundColor = '#000';
+                  e.currentTarget.style.background = '#000';
                   e.currentTarget.style.borderColor = '#1db954';
                   e.currentTarget.style.boxShadow = '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)';
                 }}
