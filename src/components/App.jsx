@@ -122,7 +122,369 @@ const themes = {
   }
 };
 
-// Theme Selector Component
+// FLAKE Text Effect - applies directly to text
+function FlakeText({ text, theme, size = 120 }) {
+  const canvasRef = useRef(null);
+  const textCanvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const textCanvas = textCanvasRef.current;
+    if (!canvas || !textCanvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const textCtx = textCanvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
+    ctx.scale(dpr, dpr);
+
+    textCanvas.width = size * dpr;
+    textCanvas.height = size * dpr;
+    textCanvas.style.width = `${size}px`;
+    textCanvas.style.height = `${size}px`;
+    textCtx.scale(dpr, dpr);
+
+    // Draw text once
+    textCtx.font = `900 ${size * 0.7}px Impact, Arial Black`;
+    textCtx.textAlign = 'center';
+    textCtx.textBaseline = 'middle';
+    textCtx.fillStyle = theme.text;
+    textCtx.fillText(text, size / 2, size / 2);
+
+    const gridSize = 12;
+    const cellSize = size / gridSize;
+    
+    const drawPattern = (time) => {
+      ctx.clearRect(0, 0, size, size);
+      
+      const centerX = size / 2;
+      const centerY = size / 2;
+      
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          const cellX = x * cellSize + cellSize / 2;
+          const cellY = y * cellSize + cellSize / 2;
+          
+          const dx = cellX - centerX;
+          const dy = cellY - centerY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+          const normalizedDistance = distance / maxDistance;
+          
+          const angle = Math.atan2(dy, dx);
+          const rotation = angle + time * 0.3;
+          const scale = 0.4 + normalizedDistance * 0.3 + Math.sin(time * 1.5 + normalizedDistance * 4) * 0.15;
+          
+          ctx.save();
+          ctx.translate(cellX, cellY);
+          ctx.rotate(rotation);
+          ctx.scale(scale, scale);
+          
+          const opacity = 0.3 + Math.sin(time + normalizedDistance * 5) * 0.2;
+          ctx.fillStyle = theme.primary.includes('rgb') 
+            ? theme.primary.replace(')', `, ${opacity})`).replace('rgb', 'rgba')
+            : `${theme.primary}${Math.round(opacity * 255).toString(16)}`;
+          
+          ctx.beginPath();
+          ctx.arc(0, 0, cellSize * 0.3, 0, Math.PI * 2);
+          ctx.fill();
+          
+          ctx.restore();
+        }
+      }
+
+      // Composite text on top
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.drawImage(textCanvas, 0, 0, size, size);
+      ctx.globalCompositeOperation = 'source-over';
+    };
+
+    const animatePattern = () => {
+      timeRef.current += 0.015;
+      drawPattern(timeRef.current);
+      animationRef.current = requestAnimationFrame(animatePattern);
+    };
+
+    animatePattern();
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [size, theme, text]);
+
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      <canvas ref={textCanvas} style={{ display: 'none' }} />
+      <canvas
+        ref={canvasRef}
+        style={{
+          filter: `drop-shadow(0 0 15px ${theme.shadow})`,
+        }}
+      />
+    </div>
+  );
+}
+
+// DITHR Effect - Dithering/Halftone on buttons
+function DithrButton({ children, onClick, theme, className = '' }) {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={className}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        background: isHovered ? theme.gradient : theme.secondary,
+        borderColor: theme.border,
+        color: theme.text,
+        transition: 'all 0.5s ease',
+        backgroundImage: isHovered 
+          ? `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`
+          : 'none',
+        backgroundSize: isHovered ? '8px 8px' : 'auto',
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+// REFRACT Effect - Distortion wave on hover
+function RefractText({ text, theme }) {
+  const canvasRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    
+    const width = text.length * 60;
+    canvas.width = width * dpr;
+    canvas.height = 100 * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = '100px';
+    ctx.scale(dpr, dpr);
+
+    const drawRefract = (time) => {
+      ctx.clearRect(0, 0, width, 100);
+      
+      ctx.font = 'bold 60px Impact, Arial Black';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      const letters = text.split('');
+      const spacing = width / (letters.length + 1);
+      
+      letters.forEach((letter, i) => {
+        const x = spacing * (i + 1);
+        const offset = isHovered ? Math.sin(time * 3 + i * 0.8) * 8 : 0;
+        const y = 50 + offset;
+        
+        ctx.save();
+        ctx.translate(x, y);
+        
+        ctx.fillStyle = theme.primary;
+        ctx.globalAlpha = 0.9;
+        ctx.fillText(letter, 0, 0);
+        
+        if (isHovered) {
+          ctx.globalAlpha = 0.3;
+          ctx.fillStyle = theme.text;
+          ctx.fillText(letter, offset * 0.5, offset * 0.3);
+        }
+        
+        ctx.restore();
+      });
+    };
+
+    const animate = () => {
+      timeRef.current += 0.05;
+      drawRefract(timeRef.current);
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [text, theme, isHovered]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        filter: `drop-shadow(0 0 20px ${theme.shadow})`,
+        cursor: 'pointer'
+      }}
+    />
+  );
+}
+
+// KLON Effect - Glitchy repetition
+function KlonText({ text, theme, active = false }) {
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    
+    canvas.width = 400 * dpr;
+    canvas.height = 120 * dpr;
+    canvas.style.width = '400px';
+    canvas.style.height = '120px';
+    ctx.scale(dpr, dpr);
+
+    const drawKlon = (time) => {
+      ctx.clearRect(0, 0, 400, 120);
+      
+      ctx.font = 'bold 70px Impact, Arial Black';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      const layers = active ? 8 : 3;
+      
+      for (let i = 0; i < layers; i++) {
+        const offset = active ? Math.sin(time * 2 + i) * (15 - i * 2) : i * 2;
+        const alpha = active ? 0.15 : 0.3;
+        
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = i % 2 === 0 ? theme.primary : theme.text;
+        ctx.fillText(text, 200 + offset, 60);
+        ctx.restore();
+      }
+      
+      // Main text
+      ctx.fillStyle = theme.text;
+      ctx.globalAlpha = 1;
+      ctx.fillText(text, 200, 60);
+    };
+
+    const animate = () => {
+      if (active) {
+        timeRef.current += 0.08;
+      }
+      drawKlon(timeRef.current);
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [text, theme, active]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        filter: `drop-shadow(0 0 15px ${theme.shadow})`
+      }}
+    />
+  );
+}
+
+// SPLITX Effect - for COMING SOON text
+function SplitXText({ text, theme }) {
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    
+    canvas.width = 800 * dpr;
+    canvas.height = 200 * dpr;
+    canvas.style.width = '800px';
+    canvas.style.height = '200px';
+    ctx.scale(dpr, dpr);
+
+    ctx.font = 'bold 100px Impact, Arial Black';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const drawSplitX = (time) => {
+      ctx.clearRect(0, 0, 800, 200);
+      
+      const segments = 12;
+      for (let i = 0; i < segments; i++) {
+        const progress = i / segments;
+        const offset = Math.sin(time + progress * Math.PI * 2) * 10;
+        const scale = 1 + Math.sin(time * 2 + progress * 5) * 0.05;
+        
+        ctx.save();
+        ctx.translate(400, 100);
+        ctx.translate(offset, 0);
+        ctx.scale(scale, 1);
+        
+        ctx.globalAlpha = 0.5 + (i / segments) * 0.5;
+        ctx.fillStyle = theme.primary;
+        ctx.fillText(text, 0, 0);
+        
+        ctx.restore();
+      }
+    };
+
+    const animate = () => {
+      timeRef.current += 0.03;
+      drawSplitX(timeRef.current);
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [text, theme]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        filter: `drop-shadow(0 0 25px ${theme.shadow})`
+      }}
+    />
+  );
+}
+
+// Theme Selector with DITHR effect
 function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const themeKeys = Object.keys(themes);
@@ -138,7 +500,9 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
         style={{
           background: themes[currentTheme].secondary,
           borderColor: themes[currentTheme].border,
-          boxShadow: `0 0 20px ${themes[currentTheme].shadow}`
+          boxShadow: `0 0 20px ${themes[currentTheme].shadow}`,
+          backgroundImage: `radial-gradient(circle, ${themes[currentTheme].primary} 1px, transparent 1px)`,
+          backgroundSize: '6px 6px'
         }}
       >
         <div
@@ -181,17 +545,9 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
                   boxShadow: currentTheme === key 
                     ? `0 0 20px ${themes[key].shadow}` 
                     : `0 0 10px ${themes[key].shadow}`,
-                  transform: currentTheme === key ? 'scale(1.1)' : 'scale(1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.2)';
-                  e.currentTarget.style.boxShadow = `0 0 25px ${themes[key].shadow}`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = currentTheme === key ? 'scale(1.1)' : 'scale(1)';
-                  e.currentTarget.style.boxShadow = currentTheme === key 
-                    ? `0 0 20px ${themes[key].shadow}` 
-                    : `0 0 10px ${themes[key].shadow}`;
+                  transform: currentTheme === key ? 'scale(1.1)' : 'scale(1)',
+                  backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)`,
+                  backgroundSize: '4px 4px'
                 }}
               />
             ))}
@@ -486,9 +842,10 @@ function SequentialTextCursor({
   );
 }
 
-// BubbleMenu Component
+// BubbleMenu Component with KLON effect on items
 function BubbleMenu({ items, onNavigate, theme }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   const handleToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -508,19 +865,11 @@ function BubbleMenu({ items, onNavigate, theme }) {
         style={{
           background: theme.secondary,
           borderColor: theme.border,
-          boxShadow: `0 0 20px ${theme.glow}, inset 0 0 10px ${theme.shadow}`
+          boxShadow: `0 0 20px ${theme.glow}, inset 0 0 10px ${theme.shadow}`,
+          backgroundImage: `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`,
+          backgroundSize: '6px 6px'
         }}
         onClick={handleToggle}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = theme.primary;
-          e.currentTarget.style.borderColor = theme.text;
-          e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 15px rgba(255, 255, 255, 0.3)`;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = theme.secondary;
-          e.currentTarget.style.borderColor = theme.border;
-          e.currentTarget.style.boxShadow = `0 0 20px ${theme.glow}, inset 0 0 10px ${theme.shadow}`;
-        }}
       >
         <span 
           className={`w-6 md:w-8 h-0.5 rounded transition-all duration-500 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`}
@@ -544,10 +893,8 @@ function BubbleMenu({ items, onNavigate, theme }) {
           >
             <div className="flex flex-col gap-4 md:gap-8 p-4 md:p-6">
               {items.map((item, idx) => (
-                <motion.a
+                <motion.div
                   key={idx}
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.page)}
                   initial={{ scale: 0, opacity: 0, x: -100 }}
                   animate={{ scale: 1, opacity: 1, x: 0 }}
                   exit={{ scale: 0, opacity: 0, x: 100 }}
@@ -558,30 +905,33 @@ function BubbleMenu({ items, onNavigate, theme }) {
                     damping: 25,
                     duration: 0.6
                   }}
-                  className="px-8 py-4 md:px-20 md:py-8 text-4xl md:text-6xl font-black rounded-full text-white border-4 flex items-center justify-center transition-all duration-500 no-underline"
-                  style={{
-                    backgroundColor: theme.secondary,
-                    borderColor: theme.border,
-                    color: theme.text,
-                    boxShadow: `0 0 30px ${theme.shadow}`,
-                    letterSpacing: '0.1em',
-                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.background = theme.gradient;
-                    e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
-                    e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 20px rgba(255, 255, 255, 0.2)`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.backgroundColor = theme.secondary;
-                    e.currentTarget.style.borderColor = theme.border;
-                    e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}`;
-                  }}
+                  onMouseEnter={() => setHoveredIndex(idx)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                 >
-                  {item.label}
-                </motion.a>
+                  <a
+                    href={item.href}
+                    onClick={(e) => handleNavClick(e, item.page)}
+                    className="block px-8 py-4 md:px-20 md:py-8 text-4xl md:text-6xl font-black rounded-full text-white border-4 text-center transition-all duration-500 no-underline"
+                    style={{
+                      backgroundColor: theme.secondary,
+                      borderColor: theme.border,
+                      color: theme.text,
+                      boxShadow: `0 0 30px ${theme.shadow}`,
+                      letterSpacing: '0.1em',
+                      fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    {hoveredIndex === idx ? (
+                      <div style={{ display: 'inline-block' }}>
+                        <KlonText text={item.label} theme={theme} active={true} />
+                      </div>
+                    ) : (
+                      item.label
+                    )}
+                  </a>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -602,7 +952,8 @@ export default function App() {
   const menuItems = [
     { label: 'HOME', href: '#home', page: 'home' },
     { label: 'MUSIC', href: '#music', page: 'music' },
-    { label: 'CONTACT', href: '#contact', page: 'contact' }
+    { label: 'CONTACT', href: '#contact', page: 'contact' },
+    { label: 'SNIPPETS', href: '#snippets', page: 'snippets' }
   ];
 
   const handleNavigate = (page) => {
@@ -617,34 +968,22 @@ export default function App() {
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <SequentialTextCursor spacing={80} maxPoints={15} theme={theme} />
-            <button
+            <DithrButton
               onClick={() => setCurrentPage('home')}
-              className="text-white font-black tracking-wider cursor-pointer bg-transparent border-4 md:border-4 z-10 transition-all duration-500 px-12 py-4 md:px-20 md:py-6 rounded-full"
+              theme={theme}
+              className="text-white font-black tracking-wider cursor-pointer border-4 md:border-4 z-10 transition-all duration-500 px-12 py-4 md:px-20 md:py-6 rounded-full"
               style={{
                 fontSize: 'clamp(2.5rem, 10vw, 6rem)',
                 borderColor: theme.border,
                 color: theme.text,
-                background: theme.secondary,
                 textShadow: `0 0 20px ${theme.shadow}`,
                 boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`,
                 letterSpacing: '0.2em',
                 fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.background = theme.gradient;
-                e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
-                e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 30px rgba(255, 255, 255, 0.3)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.background = theme.secondary;
-                e.currentTarget.style.borderColor = theme.border;
-                e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`;
-              }}
             >
               <DecryptedText text="ENTER" animateOn="hover" speed={40} maxIterations={30} />
-            </button>
+            </DithrButton>
           </div>
         );
 
@@ -655,7 +994,7 @@ export default function App() {
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
               {['J', 'A', 'Y', 'K'].map((letter, i) => (
-                <motion.span
+                <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 100, rotateX: -90 }}
                   animate={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -666,28 +1005,13 @@ export default function App() {
                     damping: 20,
                     duration: 0.8
                   }}
-                  className="inline-block px-6 py-4 md:px-10 md:py-8 border-2 md:border-4 rounded-2xl md:rounded-3xl"
-                  style={{
-                    fontSize: 'clamp(4rem, 15vw, 9rem)',
-                    fontWeight: '900',
-                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
-                    color: theme.text,
-                    background: theme.secondary,
-                    borderColor: theme.border,
-                    boxShadow: `0 0 40px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
-                    letterSpacing: '0.05em',
-                    textShadow: `0 0 20px ${theme.shadow}`
-                  }}
                 >
-                  <DecryptedText
-                    text={letter}
-                    animateOn="view"
-                    speed={50}
-                    maxIterations={20}
-                    sequential={true}
-                    revealDirection="center"
+                  <FlakeText 
+                    text={letter} 
+                    theme={theme} 
+                    size={window.innerWidth < 768 ? 80 : 140} 
                   />
-                </motion.span>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -698,44 +1022,48 @@ export default function App() {
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
-            <a
-              href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-black cursor-pointer no-underline z-10 px-8 py-4 md:px-20 md:py-10 border-2 md:border-4 rounded-full text-center"
-              style={{
-                fontSize: 'clamp(1.5rem, 6vw, 4.5rem)',
-                color: '#fff',
-                background: '#000',
-                borderColor: '#1db954',
-                boxShadow: '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)',
-                transition: 'all 0.5s ease',
-                letterSpacing: '0.1em',
-                textShadow: '0 0 20px rgba(29, 185, 84, 0.8)',
-                fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.background = theme.spotify;
-                e.currentTarget.style.borderColor = '#fff';
-                e.currentTarget.style.boxShadow = `0 0 70px ${theme.spotifyShadow}, inset 0 0 40px rgba(255, 255, 255, 0.3)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.backgroundColor = '#000';
-                e.currentTarget.style.borderColor = '#1db954';
-                e.currentTarget.style.boxShadow = '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)';
-              }}
-            >
-              <DecryptedText
-                text="LISTEN ON SPOTIFY"
-                animateOn="both"
-                speed={35}
-                maxIterations={25}
-                sequential={true}
-                revealDirection="center"
-              />
-            </a>
+            <div className="flex flex-col items-center gap-8">
+              <a
+                href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-black cursor-pointer no-underline z-10 px-8 py-4 md:px-20 md:py-10 border-2 md:border-4 rounded-full text-center block"
+                style={{
+                  fontSize: 'clamp(1.5rem, 6vw, 4.5rem)',
+                  color: '#fff',
+                  background: '#000',
+                  borderColor: '#1db954',
+                  boxShadow: '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)',
+                  transition: 'all 0.5s ease',
+                  letterSpacing: '0.1em',
+                  textShadow: '0 0 20px rgba(29, 185, 84, 0.8)',
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
+                  backgroundImage: 'radial-gradient(circle, rgba(29, 185, 84, 0.2) 1px, transparent 1px)',
+                  backgroundSize: '8px 8px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.background = 'linear-gradient(145deg, #1db954, #1ed760)';
+                  e.currentTarget.style.borderColor = '#fff';
+                  e.currentTarget.style.boxShadow = '0 0 70px rgba(29, 185, 84, 1), inset 0 0 40px rgba(255, 255, 255, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.backgroundColor = '#000';
+                  e.currentTarget.style.borderColor = '#1db954';
+                  e.currentTarget.style.boxShadow = '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)';
+                }}
+              >
+                <DecryptedText
+                  text="LISTEN ON SPOTIFY"
+                  animateOn="both"
+                  speed={35}
+                  maxIterations={25}
+                  sequential={true}
+                  revealDirection="center"
+                />
+              </a>
+            </div>
           </div>
         );
 
@@ -745,25 +1073,8 @@ export default function App() {
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
             <div className="text-center z-10 max-w-full">
-              <div className="font-black mb-6 md:mb-12 px-8 py-4 md:px-16 md:py-8 border-2 md:border-4 inline-block rounded-2xl md:rounded-full"
-                style={{
-                  fontSize: 'clamp(2rem, 8vw, 4.5rem)',
-                  color: theme.text,
-                  background: theme.secondary,
-                  borderColor: theme.border,
-                  boxShadow: `0 0 50px ${theme.shadow}, inset 0 0 30px ${theme.glow}`,
-                  letterSpacing: '0.1em',
-                  textShadow: `0 0 20px ${theme.shadow}`,
-                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
-                }}
-              >
-                <DecryptedText
-                  text="GET IN TOUCH"
-                  animateOn="view"
-                  speed={40}
-                  maxIterations={30}
-                  sequential={true}
-                />
+              <div className="mb-8 flex justify-center">
+                <RefractText text="GET IN TOUCH" theme={theme} />
               </div>
               
               <a
@@ -777,19 +1088,23 @@ export default function App() {
                   boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`,
                   letterSpacing: '0.05em',
                   maxWidth: '90vw',
-                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
+                  backgroundImage: `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`,
+                  backgroundSize: '6px 6px'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
                   e.currentTarget.style.background = theme.gradient;
                   e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
                   e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 30px rgba(255, 255, 255, 0.3)`;
+                  e.currentTarget.style.backgroundImage = 'none';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
                   e.currentTarget.style.background = theme.secondary;
                   e.currentTarget.style.borderColor = theme.border;
                   e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`;
+                  e.currentTarget.style.backgroundImage = `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`;
                 }}
               >
                 <DecryptedText
@@ -799,6 +1114,42 @@ export default function App() {
                   maxIterations={30}
                 />
               </a>
+            </div>
+          </div>
+        );
+
+      case 'snippets':
+        return (
+          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
+            <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
+            <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} />
+            <div className="text-center z-10 flex flex-col items-center gap-8">
+              <div className="mb-4">
+                <p 
+                  className="text-xl md:text-3xl font-bold mb-8"
+                  style={{
+                    color: theme.primary,
+                    textShadow: `0 0 20px ${theme.shadow}`,
+                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
+                    letterSpacing: '0.1em'
+                  }}
+                >
+                  EXCLUSIVE CONTENT & BEHIND THE SCENES
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <SplitXText text="COMING SOON" theme={theme} />
+              </div>
+              <p 
+                className="text-lg md:text-2xl font-bold mt-4"
+                style={{
+                  color: theme.text,
+                  textShadow: `0 0 15px ${theme.shadow}`,
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
+                }}
+              >
+                NEW SNIPPETS DROPPING SOON
+              </p>
             </div>
           </div>
         );
