@@ -340,7 +340,7 @@ function RefractText({ text, theme }) {
   );
 }
 
-// KLON Effect - Glitchy repetition
+// KLON Effect - Glitchy repetition - SMOOTHER ANIMATION
 function KlonText({ text, theme, active = false }) {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -366,11 +366,11 @@ function KlonText({ text, theme, active = false }) {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
-      const layers = active ? 8 : 3;
+      const layers = active ? 6 : 3;
       
       for (let i = 0; i < layers; i++) {
-        const offset = active ? Math.sin(time * 2 + i) * (15 - i * 2) : i * 2;
-        const alpha = active ? 0.15 : 0.3;
+        const offset = active ? Math.sin(time + i * 0.5) * (10 - i * 1.5) : i * 2;
+        const alpha = active ? 0.2 : 0.3;
         
         ctx.save();
         ctx.globalAlpha = alpha;
@@ -386,7 +386,7 @@ function KlonText({ text, theme, active = false }) {
 
     const animate = () => {
       if (active) {
-        timeRef.current += 0.08;
+        timeRef.current += 0.04;
       }
       drawKlon(timeRef.current);
       animationRef.current = requestAnimationFrame(animate);
@@ -411,7 +411,7 @@ function KlonText({ text, theme, active = false }) {
   );
 }
 
-// SPLITX Effect - for COMING SOON text
+// SPLITX Effect - SMALLER, LIGHTER, MORE SPACED
 function SplitXText({ text, theme }) {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -425,30 +425,30 @@ function SplitXText({ text, theme }) {
     const dpr = window.devicePixelRatio || 1;
     
     canvas.width = 800 * dpr;
-    canvas.height = 200 * dpr;
+    canvas.height = 150 * dpr;
     canvas.style.width = '800px';
-    canvas.style.height = '200px';
+    canvas.style.height = '150px';
     ctx.scale(dpr, dpr);
 
-    ctx.font = 'bold 100px Impact, Arial Black';
+    ctx.font = '300 60px Impact, Arial Black';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     const drawSplitX = (time) => {
-      ctx.clearRect(0, 0, 800, 200);
+      ctx.clearRect(0, 0, 800, 150);
       
-      const segments = 12;
+      const segments = 8;
       for (let i = 0; i < segments; i++) {
         const progress = i / segments;
-        const offset = Math.sin(time + progress * Math.PI * 2) * 10;
-        const scale = 1 + Math.sin(time * 2 + progress * 5) * 0.05;
+        const offset = Math.sin(time + progress * Math.PI * 2) * 15;
+        const scale = 1 + Math.sin(time * 2 + progress * 5) * 0.03;
         
         ctx.save();
-        ctx.translate(400, 100);
+        ctx.translate(400, 75);
         ctx.translate(offset, 0);
         ctx.scale(scale, 1);
         
-        ctx.globalAlpha = 0.5 + (i / segments) * 0.5;
+        ctx.globalAlpha = 0.4 + (i / segments) * 0.4;
         ctx.fillStyle = theme.primary;
         ctx.fillText(text, 0, 0);
         
@@ -457,7 +457,7 @@ function SplitXText({ text, theme }) {
     };
 
     const animate = () => {
-      timeRef.current += 0.03;
+      timeRef.current += 0.025;
       drawSplitX(timeRef.current);
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -475,7 +475,7 @@ function SplitXText({ text, theme }) {
     <canvas
       ref={canvasRef}
       style={{
-        filter: `drop-shadow(0 0 25px ${theme.shadow})`
+        filter: `drop-shadow(0 0 20px ${theme.shadow})`
       }}
     />
   );
@@ -883,9 +883,15 @@ function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }}
             className="fixed inset-0 flex items-center justify-center z-40"
-            style={{ background: 'rgba(0, 0, 0, 0.95)' }}
+            style={{ 
+              background: 'rgba(0, 0, 0, 0.95)',
+              backgroundImage: 'url("https://antlii.work/plain-generator")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundBlendMode: 'overlay'
+            }}
           >
             <div className="flex flex-col gap-4 md:gap-8 p-4 md:p-6">
               {items.map((item, idx) => (
@@ -895,11 +901,11 @@ function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
                   animate={{ scale: 1, opacity: 1, x: 0 }}
                   exit={{ scale: 0, opacity: 0, x: 100 }}
                   transition={{ 
-                    delay: idx * 0.15,
+                    delay: idx * 0.1,
                     type: 'spring',
-                    stiffness: 200,
-                    damping: 25,
-                    duration: 0.6
+                    stiffness: 120,
+                    damping: 15,
+                    duration: 0.5
                   }}
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
@@ -907,7 +913,7 @@ function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
                   <a
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.page)}
-                    className="block px-8 py-4 md:px-20 md:py-8 text-4xl md:text-6xl font-black rounded-full text-white border-4 text-center transition-all duration-500 no-underline"
+                    className="block px-8 py-4 md:px-20 md:py-8 text-4xl md:text-6xl font-black rounded-full text-white border-4 text-center transition-all duration-300 no-underline"
                     style={{
                       backgroundColor: theme.secondary,
                       borderColor: theme.border,
@@ -985,7 +991,16 @@ export default function App() {
 
       case 'home':
         return (
-          <div className="w-full h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden p-4">
+          <div 
+            className="w-full h-screen flex flex-col items-center justify-center relative overflow-hidden p-4"
+            style={{
+              background: theme.secondary,
+              backgroundImage: 'url("https://antlii.work/plain-generator")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundBlendMode: 'overlay'
+            }}
+          >
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
             <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
@@ -1015,7 +1030,16 @@ export default function App() {
 
       case 'music':
         return (
-          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
+          <div 
+            className="w-full h-screen flex items-center justify-center relative overflow-hidden p-4"
+            style={{
+              background: theme.secondary,
+              backgroundImage: 'url("https://antlii.work/plain-generator")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundBlendMode: 'overlay'
+            }}
+          >
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
             <div className="flex flex-col items-center gap-8">
@@ -1065,7 +1089,16 @@ export default function App() {
 
       case 'contact':
         return (
-          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4 md:p-8">
+          <div 
+            className="w-full h-screen flex items-center justify-center relative overflow-hidden p-4 md:p-8"
+            style={{
+              background: theme.secondary,
+              backgroundImage: 'url("https://antlii.work/plain-generator")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundBlendMode: 'overlay'
+            }}
+          >
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
             <div className="text-center z-10 max-w-full">
@@ -1116,18 +1149,28 @@ export default function App() {
 
       case 'snippets':
         return (
-          <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden p-4">
+          <div 
+            className="w-full h-screen flex items-center justify-center relative overflow-hidden p-4"
+            style={{
+              background: theme.secondary,
+              backgroundImage: 'url("https://antlii.work/plain-generator")',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundBlendMode: 'overlay'
+            }}
+          >
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
             <div className="text-center z-10 flex flex-col items-center gap-8">
               <div className="mb-4">
                 <p 
-                  className="text-xl md:text-3xl font-bold mb-8"
+                  className="text-xl md:text-2xl font-bold mb-8"
                   style={{
                     color: theme.primary,
                     textShadow: `0 0 20px ${theme.shadow}`,
                     fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
-                    letterSpacing: '0.1em'
+                    letterSpacing: '0.15em',
+                    fontWeight: 'bold'
                   }}
                 >
                   EXCLUSIVE CONTENT & BEHIND THE SCENES
@@ -1137,11 +1180,12 @@ export default function App() {
                 <SplitXText text="COMING SOON" theme={theme} />
               </div>
               <p 
-                className="text-lg md:text-2xl font-bold mt-4"
+                className="text-base md:text-xl font-normal mt-4"
                 style={{
-                  color: theme.text,
-                  textShadow: `0 0 15px ${theme.shadow}`,
-                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
+                  color: theme.text === '#000' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)',
+                  textShadow: theme.text === '#000' ? 'none' : `0 0 10px ${theme.shadow}`,
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
+                  letterSpacing: '0.1em'
                 }}
               >
                 NEW SNIPPETS DROPPING SOON
