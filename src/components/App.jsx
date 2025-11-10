@@ -130,27 +130,30 @@ function FlakeText({ text, theme, size = 120 }) {
   const timeRef = useRef(0);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const txtCanvas = textCanvasRef.current;
-    if (!canvas || !txtCanvas) return;
+    const mainCanvas = canvasRef.current;
+    const textCanvas = textCanvasRef.current;
     
-    const ctx = canvas.getContext('2d');
-    const textCtx = txtCanvas.getContext('2d');
+    if (!mainCanvas || !textCanvas) return;
+    
+    const ctx = mainCanvas.getContext('2d');
+    const textCtx = textCanvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size}px`;
+    // Setup main canvas
+    mainCanvas.width = size * dpr;
+    mainCanvas.height = size * dpr;
+    mainCanvas.style.width = `${size}px`;
+    mainCanvas.style.height = `${size}px`;
     ctx.scale(dpr, dpr);
 
-    txtCanvas.width = size * dpr;
-    txtCanvas.height = size * dpr;
-    txtCanvas.style.width = `${size}px`;
-    txtCanvas.style.height = `${size}px`;
+    // Setup text canvas
+    textCanvas.width = size * dpr;
+    textCanvas.height = size * dpr;
+    textCanvas.style.width = `${size}px`;
+    textCanvas.style.height = `${size}px`;
     textCtx.scale(dpr, dpr);
 
-    // Draw text once
+    // Draw text once on text canvas
     textCtx.font = `900 ${size * 0.7}px Impact, Arial Black`;
     textCtx.textAlign = 'center';
     textCtx.textBaseline = 'middle';
@@ -201,7 +204,7 @@ function FlakeText({ text, theme, size = 120 }) {
 
       // Composite text on top
       ctx.globalCompositeOperation = 'destination-in';
-      ctx.drawImage(txtCanvas, 0, 0, size, size);
+      ctx.drawImage(textCanvas, 0, 0, size, size);
       ctx.globalCompositeOperation = 'source-over';
     };
 
@@ -222,7 +225,7 @@ function FlakeText({ text, theme, size = 120 }) {
 
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
-      <canvas ref={textCanvas} style={{ display: 'none' }} />
+      <canvas ref={textCanvasRef} style={{ display: 'none' }} />
       <canvas
         ref={canvasRef}
         style={{
@@ -299,7 +302,6 @@ function RefractText({ text, theme }) {
         ctx.save();
         ctx.translate(x, y);
         
-        // Always show refraction layers
         ctx.globalAlpha = 0.3;
         ctx.fillStyle = theme.text;
         ctx.fillText(letter, offset * 0.5, offset * 0.3);
@@ -377,7 +379,6 @@ function KlonText({ text, theme, active = false }) {
         ctx.restore();
       }
       
-      // Main text
       ctx.fillStyle = theme.text;
       ctx.globalAlpha = 1;
       ctx.fillText(text, 200, 60);
@@ -480,7 +481,7 @@ function SplitXText({ text, theme }) {
   );
 }
 
-// Theme Selector with DITHR effect
+// Theme Selector
 function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const themeKeys = Object.keys(themes);
@@ -838,7 +839,7 @@ function SequentialTextCursor({
   );
 }
 
-// BubbleMenu Component with KLON effect on items
+// BubbleMenu Component
 function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
