@@ -1,128 +1,115 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Color themes
+// Color themes - Updated for dark neon city aesthetic
 const themes = {
-  pastelBlue: {
-    name: 'Pastel Blue',
-    primary: '#B3D9FF',
-    secondary: '#F0F8FF',
-    text: '#003366',
-    border: '#B3D9FF',
-    shadow: 'rgba(179, 217, 255, 0.6)',
-    glow: 'rgba(179, 217, 255, 0.4)',
-    gradient: 'linear-gradient(145deg, #B3D9FF, #CCE5FF)',
+  neonCyan: {
+    name: 'Neon Cyan',
+    primary: '#00FFFF',
+    secondary: '#0a0a0a',
+    text: '#00FFFF',
+    border: '#00FFFF',
+    shadow: 'rgba(0, 255, 255, 0.8)',
+    glow: 'rgba(0, 255, 255, 0.4)',
+    gradient: 'linear-gradient(145deg, #00FFFF, #00CCCC)',
     spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
     spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#B3D9FF'
+    indicator: '#00FFFF'
   },
-  pastelPink: {
-    name: 'Pastel Pink',
-    primary: '#FFB3D9',
-    secondary: '#FFF0F7',
-    text: '#660033',
-    border: '#FFB3D9',
-    shadow: 'rgba(255, 179, 217, 0.6)',
-    glow: 'rgba(255, 179, 217, 0.4)',
-    gradient: 'linear-gradient(145deg, #FFB3D9, #FFCCE5)',
+  neonPink: {
+    name: 'Neon Pink',
+    primary: '#FF10F0',
+    secondary: '#0a0a0a',
+    text: '#FF10F0',
+    border: '#FF10F0',
+    shadow: 'rgba(255, 16, 240, 0.8)',
+    glow: 'rgba(255, 16, 240, 0.4)',
+    gradient: 'linear-gradient(145deg, #FF10F0, #CC0DC0)',
     spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
     spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#FFB3D9'
-  },
-  pastelMint: {
-    name: 'Pastel Mint',
-    primary: '#B3FFD9',
-    secondary: '#F0FFF7',
-    text: '#003322',
-    border: '#B3FFD9',
-    shadow: 'rgba(179, 255, 217, 0.6)',
-    glow: 'rgba(179, 255, 217, 0.4)',
-    gradient: 'linear-gradient(145deg, #B3FFD9, #CCFFE5)',
-    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
-    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#B3FFD9'
-  },
-  pastelLavender: {
-    name: 'Pastel Lavender',
-    primary: '#D9B3FF',
-    secondary: '#F7F0FF',
-    text: '#330066',
-    border: '#D9B3FF',
-    shadow: 'rgba(217, 179, 255, 0.6)',
-    glow: 'rgba(217, 179, 255, 0.4)',
-    gradient: 'linear-gradient(145deg, #D9B3FF, #E5CCFF)',
-    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
-    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#D9B3FF'
-  },
-  aggressiveRed: {
-    name: 'Aggressive Red',
-    primary: '#DC0000',
-    secondary: '#000',
-    text: '#fff',
-    border: '#DC0000',
-    shadow: 'rgba(220, 0, 0, 0.8)',
-    glow: 'rgba(220, 0, 0, 0.5)',
-    gradient: 'linear-gradient(145deg, #DC0000, #FF0000)',
-    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
-    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#DC0000'
-  },
-  pastelRed: {
-    name: 'Pastel Red',
-    primary: '#FFB3B3',
-    secondary: '#FFF5F5',
-    text: '#8B0000',
-    border: '#FFB3B3',
-    shadow: 'rgba(255, 179, 179, 0.6)',
-    glow: 'rgba(255, 179, 179, 0.4)',
-    gradient: 'linear-gradient(145deg, #FFB3B3, #FFC9C9)',
-    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
-    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#FFB3B3'
-  },
-  aggressiveBlue: {
-    name: 'Aggressive Blue',
-    primary: '#0066FF',
-    secondary: '#000033',
-    text: '#fff',
-    border: '#0066FF',
-    shadow: 'rgba(0, 102, 255, 0.8)',
-    glow: 'rgba(0, 102, 255, 0.5)',
-    gradient: 'linear-gradient(145deg, #0066FF, #0080FF)',
-    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
-    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#0066FF'
+    indicator: '#FF10F0'
   },
   neonPurple: {
     name: 'Neon Purple',
     primary: '#9D00FF',
-    secondary: '#1A001A',
-    text: '#fff',
+    secondary: '#0a0a0a',
+    text: '#9D00FF',
     border: '#9D00FF',
     shadow: 'rgba(157, 0, 255, 0.8)',
-    glow: 'rgba(157, 0, 255, 0.5)',
+    glow: 'rgba(157, 0, 255, 0.4)',
     gradient: 'linear-gradient(145deg, #9D00FF, #B84DFF)',
     spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
     spotifyShadow: 'rgba(29, 185, 84, 0.7)',
     indicator: '#9D00FF'
   },
-  neonGreenYellow: {
-    name: 'Neon Green-Yellow',
-    primary: '#CCFF00',
-    secondary: '#1A1A00',
-    text: '#000',
-    border: '#CCFF00',
-    shadow: 'rgba(204, 255, 0, 0.8)',
-    glow: 'rgba(204, 255, 0, 0.5)',
-    gradient: 'linear-gradient(145deg, #CCFF00, #E6FF4D)',
+  neonOrange: {
+    name: 'Neon Orange',
+    primary: '#FF6600',
+    secondary: '#0a0a0a',
+    text: '#FF6600',
+    border: '#FF6600',
+    shadow: 'rgba(255, 102, 0, 0.8)',
+    glow: 'rgba(255, 102, 0, 0.4)',
+    gradient: 'linear-gradient(145deg, #FF6600, #FF8533)',
     spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
     spotifyShadow: 'rgba(29, 185, 84, 0.7)',
-    indicator: '#CCFF00'
+    indicator: '#FF6600'
+  },
+  neonGreen: {
+    name: 'Neon Green',
+    primary: '#39FF14',
+    secondary: '#0a0a0a',
+    text: '#39FF14',
+    border: '#39FF14',
+    shadow: 'rgba(57, 255, 20, 0.8)',
+    glow: 'rgba(57, 255, 20, 0.4)',
+    gradient: 'linear-gradient(145deg, #39FF14, #2ECC11)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#39FF14'
+  },
+  neonRed: {
+    name: 'Neon Red',
+    primary: '#FF0040',
+    secondary: '#0a0a0a',
+    text: '#FF0040',
+    border: '#FF0040',
+    shadow: 'rgba(255, 0, 64, 0.8)',
+    glow: 'rgba(255, 0, 64, 0.4)',
+    gradient: 'linear-gradient(145deg, #FF0040, #CC0033)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#FF0040'
+  },
+  neonBlue: {
+    name: 'Neon Blue',
+    primary: '#0080FF',
+    secondary: '#0a0a0a',
+    text: '#0080FF',
+    border: '#0080FF',
+    shadow: 'rgba(0, 128, 255, 0.8)',
+    glow: 'rgba(0, 128, 255, 0.4)',
+    gradient: 'linear-gradient(145deg, #0080FF, #0066CC)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#0080FF'
+  },
+  neonYellow: {
+    name: 'Neon Yellow',
+    primary: '#FFFF00',
+    secondary: '#0a0a0a',
+    text: '#FFFF00',
+    border: '#FFFF00',
+    shadow: 'rgba(255, 255, 0, 0.8)',
+    glow: 'rgba(255, 255, 0, 0.4)',
+    gradient: 'linear-gradient(145deg, #FFFF00, #CCCC00)',
+    spotify: 'linear-gradient(145deg, #1db954, #1ed760)',
+    spotifyShadow: 'rgba(29, 185, 84, 0.7)',
+    indicator: '#FFFF00'
   }
 };
 
-// FLAKE Text Effect - applies directly to text
+// FLAKE Text Effect
 function FlakeText({ text, theme, size = 120 }) {
   const canvasRef = useRef(null);
   const textCanvasRef = useRef(null);
@@ -139,21 +126,18 @@ function FlakeText({ text, theme, size = 120 }) {
     const textCtx = textCanvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     
-    // Setup main canvas
     mainCanvas.width = size * dpr;
     mainCanvas.height = size * dpr;
     mainCanvas.style.width = `${size}px`;
     mainCanvas.style.height = `${size}px`;
     ctx.scale(dpr, dpr);
 
-    // Setup text canvas
     textCanvas.width = size * dpr;
     textCanvas.height = size * dpr;
     textCanvas.style.width = `${size}px`;
     textCanvas.style.height = `${size}px`;
     textCtx.scale(dpr, dpr);
 
-    // Draw text once on text canvas
     textCtx.font = `900 ${size * 0.7}px Impact, Arial Black`;
     textCtx.textAlign = 'center';
     textCtx.textBaseline = 'middle';
@@ -202,7 +186,6 @@ function FlakeText({ text, theme, size = 120 }) {
         }
       }
 
-      // Composite text on top
       ctx.globalCompositeOperation = 'destination-in';
       ctx.drawImage(textCanvas, 0, 0, size, size);
       ctx.globalCompositeOperation = 'source-over';
@@ -229,14 +212,14 @@ function FlakeText({ text, theme, size = 120 }) {
       <canvas
         ref={canvasRef}
         style={{
-          filter: `drop-shadow(0 0 15px ${theme.shadow})`,
+          filter: `drop-shadow(0 0 20px ${theme.shadow}) drop-shadow(0 0 40px ${theme.glow})`,
         }}
       />
     </div>
   );
 }
 
-// DITHR Effect - Dithering/Halftone on buttons
+// DITHR Effect Button
 function DithrButton({ children, onClick, theme, className = '' }) {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -249,7 +232,7 @@ function DithrButton({ children, onClick, theme, className = '' }) {
       style={{
         position: 'relative',
         overflow: 'hidden',
-        background: isHovered ? theme.gradient : theme.secondary,
+        background: isHovered ? theme.gradient : 'rgba(10, 10, 10, 0.8)',
         borderColor: theme.border,
         color: theme.text,
         transition: 'all 0.5s ease',
@@ -257,6 +240,9 @@ function DithrButton({ children, onClick, theme, className = '' }) {
           ? `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`
           : 'none',
         backgroundSize: isHovered ? '8px 8px' : 'auto',
+        boxShadow: isHovered 
+          ? `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}` 
+          : `0 0 15px ${theme.shadow}`,
       }}
     >
       {children}
@@ -264,7 +250,7 @@ function DithrButton({ children, onClick, theme, className = '' }) {
   );
 }
 
-// REFRACT Effect - Distortion wave - ALWAYS ANIMATED
+// REFRACT Effect
 function RefractText({ text, theme }) {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -333,14 +319,14 @@ function RefractText({ text, theme }) {
     <canvas
       ref={canvasRef}
       style={{
-        filter: `drop-shadow(0 0 20px ${theme.shadow})`,
+        filter: `drop-shadow(0 0 25px ${theme.shadow}) drop-shadow(0 0 50px ${theme.glow})`,
         cursor: 'default'
       }}
     />
   );
 }
 
-// KLON Effect - Glitchy repetition - SMOOTHER ANIMATION
+// KLON Effect
 function KlonText({ text, theme, active = false }) {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -405,13 +391,13 @@ function KlonText({ text, theme, active = false }) {
     <canvas
       ref={canvasRef}
       style={{
-        filter: `drop-shadow(0 0 15px ${theme.shadow})`
+        filter: `drop-shadow(0 0 20px ${theme.shadow})`
       }}
     />
   );
 }
 
-// SPLITX Effect - SMALLER, LIGHTER, MORE SPACED
+// SPLITX Effect
 function SplitXText({ text, theme }) {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
@@ -466,7 +452,7 @@ function SplitXText({ text, theme }) {
 
     return () => {
       if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+        cancelAnimationRef.current);
       }
     };
   }, [text, theme]);
@@ -475,13 +461,13 @@ function SplitXText({ text, theme }) {
     <canvas
       ref={canvasRef}
       style={{
-        filter: `drop-shadow(0 0 20px ${theme.shadow})`
+        filter: `drop-shadow(0 0 25px ${theme.shadow})`
       }}
     />
   );
 }
 
-// Theme Selector
+// Theme Selector with improved UI
 function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const themeKeys = Object.keys(themes);
@@ -490,63 +476,83 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
 
   return (
     <div className="fixed top-4 left-4 md:top-8 md:left-8 z-50">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center border-4 cursor-pointer transition-all duration-500"
-        style={{
-          background: themes[currentTheme].secondary,
-          borderColor: themes[currentTheme].border,
-          boxShadow: `0 0 20px ${themes[currentTheme].shadow}`,
-          backgroundImage: `radial-gradient(circle, ${themes[currentTheme].primary} 1px, transparent 1px)`,
-          backgroundSize: '6px 6px'
-        }}
-      >
-        <div
-          className="w-6 h-6 md:w-8 md:h-8 rounded-full"
+      <div className="flex flex-col items-start gap-2">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-14 h-14 md:w-16 md:h-16 rounded-lg flex items-center justify-center border-2 cursor-pointer transition-all duration-500 backdrop-blur-sm"
           style={{
-            background: themes[currentTheme].gradient,
-            boxShadow: `0 0 10px ${themes[currentTheme].shadow}`
+            background: 'rgba(10, 10, 10, 0.9)',
+            borderColor: themes[currentTheme].border,
+            boxShadow: `0 0 25px ${themes[currentTheme].shadow}, inset 0 0 15px ${themes[currentTheme].glow}`,
           }}
-        />
-      </button>
+        >
+          <div
+            className="w-8 h-8 md:w-10 md:h-10 rounded"
+            style={{
+              background: themes[currentTheme].gradient,
+              boxShadow: `0 0 15px ${themes[currentTheme].shadow}`
+            }}
+          />
+        </button>
+        
+        {!isOpen && (
+          <span 
+            className="text-xs font-bold tracking-wider"
+            style={{ 
+              color: themes[currentTheme].primary,
+              textShadow: `0 0 10px ${themes[currentTheme].shadow}`
+            }}
+          >
+            COLOR
+          </span>
+        )}
+      </div>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="absolute top-16 md:top-20 left-0 flex flex-col gap-2 md:gap-3 p-3 md:p-4 rounded-3xl border-2"
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="absolute top-20 md:top-24 left-0 grid grid-cols-2 gap-3 p-4 rounded-2xl border-2 backdrop-blur-md"
             style={{
-              background: 'rgba(0, 0, 0, 0.95)',
+              background: 'rgba(10, 10, 10, 0.95)',
               borderColor: themes[currentTheme].border,
-              backdropFilter: 'blur(10px)'
+              boxShadow: `0 0 30px ${themes[currentTheme].shadow}`
             }}
           >
             {themeKeys.map((key, idx) => (
               <motion.button
                 key={key}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.08, duration: 0.4 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.05, duration: 0.3 }}
                 onClick={() => {
                   onThemeChange(key);
                   setIsOpen(false);
                 }}
-                className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 cursor-pointer transition-all duration-500"
+                className="w-12 h-12 md:w-14 md:h-14 rounded-lg border-2 cursor-pointer transition-all duration-300 relative group"
                 style={{
                   background: themes[key].gradient,
                   borderColor: currentTheme === key ? '#fff' : themes[key].border,
                   boxShadow: currentTheme === key 
-                    ? `0 0 20px ${themes[key].shadow}` 
+                    ? `0 0 25px ${themes[key].shadow}, 0 0 50px ${themes[key].glow}` 
                     : `0 0 10px ${themes[key].shadow}`,
                   transform: currentTheme === key ? 'scale(1.1)' : 'scale(1)',
-                  backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)`,
-                  backgroundSize: '4px 4px'
                 }}
-              />
+              >
+                <span 
+                  className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[10px] font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    color: themes[key].primary,
+                    textShadow: `0 0 10px ${themes[key].shadow}`
+                  }}
+                >
+                  {themes[key].name.split(' ')[1]}
+                </span>
+              </motion.button>
             ))}
           </motion.div>
         )}
@@ -839,7 +845,7 @@ function SequentialTextCursor({
   );
 }
 
-// BubbleMenu Component
+// BubbleMenu Component with clearer UI
 function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
@@ -855,27 +861,45 @@ function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
 
   return (
     <>
-      <button
-        type="button"
-        className="fixed top-4 right-4 md:top-8 md:right-8 w-12 h-12 md:w-16 md:h-16 rounded-full flex flex-col items-center justify-center border-2 cursor-pointer z-50 transition-all duration-500"
-        style={{
-          background: theme.secondary,
-          borderColor: theme.border,
-          boxShadow: `0 0 20px ${theme.glow}, inset 0 0 10px ${theme.shadow}`,
-          backgroundImage: `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`,
-          backgroundSize: '6px 6px'
-        }}
-        onClick={handleToggle}
-      >
-        <span 
-          className={`w-6 md:w-8 h-0.5 rounded transition-all duration-500 ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
-          style={{ background: theme.text }}
-        />
-        <span 
-          className={`w-6 md:w-8 h-0.5 rounded mt-1.5 md:mt-2 transition-all duration-500 ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
-          style={{ background: theme.text }}
-        />
-      </button>
+      <div className="fixed top-4 right-4 md:top-8 md:right-8 z-50 flex flex-col items-end gap-2">
+        <button
+          type="button"
+          className="w-14 h-14 md:w-16 md:h-16 rounded-lg flex flex-col items-center justify-center border-2 cursor-pointer transition-all duration-500 backdrop-blur-sm"
+          style={{
+            background: 'rgba(10, 10, 10, 0.9)',
+            borderColor: theme.border,
+            boxShadow: `0 0 25px ${theme.glow}, inset 0 0 10px ${theme.shadow}`,
+          }}
+          onClick={handleToggle}
+        >
+          <span 
+            className={`w-7 md:w-8 h-0.5 rounded transition-all duration-500 ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
+            style={{ 
+              background: theme.primary,
+              boxShadow: `0 0 10px ${theme.shadow}`
+            }}
+          />
+          <span 
+            className={`w-7 md:w-8 h-0.5 rounded mt-2 transition-all duration-500 ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
+            style={{ 
+              background: theme.primary,
+              boxShadow: `0 0 10px ${theme.shadow}`
+            }}
+          />
+        </button>
+        
+        {!isOpen && (
+          <span 
+            className="text-xs font-bold tracking-wider"
+            style={{ 
+              color: theme.primary,
+              textShadow: `0 0 10px ${theme.shadow}`
+            }}
+          >
+            MENU
+          </span>
+        )}
+      </div>
 
       <AnimatePresence>
         {isOpen && (
@@ -887,10 +911,7 @@ function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
             className="fixed inset-0 flex items-center justify-center z-40"
             style={{ 
               background: 'rgba(0, 0, 0, 0.95)',
-              backgroundImage: 'url("https://antlii.work/plain-generator")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundBlendMode: 'overlay'
+              backdropFilter: 'blur(20px)'
             }}
           >
             <div className="flex flex-col gap-4 md:gap-8 p-4 md:p-6">
@@ -913,16 +934,17 @@ function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
                   <a
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.page)}
-                    className="block px-8 py-4 md:px-20 md:py-8 text-4xl md:text-6xl font-black rounded-full text-white border-4 text-center transition-all duration-300 no-underline"
+                    className="block px-8 py-4 md:px-20 md:py-8 text-4xl md:text-6xl font-black rounded-lg text-white border-2 text-center transition-all duration-300 no-underline"
                     style={{
-                      backgroundColor: theme.secondary,
+                      backgroundColor: 'rgba(10, 10, 10, 0.8)',
                       borderColor: theme.border,
                       color: theme.text,
-                      boxShadow: `0 0 30px ${theme.shadow}`,
-                      letterSpacing: '0.1em',
+                      boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 15px ${theme.glow}`,
+                      letterSpacing: '0.15em',
                       fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
                       position: 'relative',
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      backdropFilter: 'blur(10px)'
                     }}
                   >
                     {hoveredIndex === idx ? (
@@ -943,10 +965,28 @@ function BubbleMenu({ items, onNavigate, theme, isOpen, setIsOpen }) {
   );
 }
 
+// Grid background effect
+function NeonGrid({ theme }) {
+  return (
+    <div 
+      className="fixed inset-0 pointer-events-none"
+      style={{
+        backgroundImage: `
+          linear-gradient(${theme.primary}22 1px, transparent 1px),
+          linear-gradient(90deg, ${theme.primary}22 1px, transparent 1px)
+        `,
+        backgroundSize: '50px 50px',
+        maskImage: 'radial-gradient(ellipse at center, black 20%, transparent 80%)',
+        WebkitMaskImage: 'radial-gradient(ellipse at center, black 20%, transparent 80%)'
+      }}
+    />
+  );
+}
+
 // Main App
 export default function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [currentTheme, setCurrentTheme] = useState('pastelBlue');
+  const [currentTheme, setCurrentTheme] = useState('neonCyan');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const theme = themes[currentTheme];
@@ -968,12 +1008,30 @@ export default function App() {
       case 'landing':
         return (
           <div className="w-full h-screen bg-black flex items-center justify-center relative overflow-hidden">
+            <NeonGrid theme={theme} />
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <SequentialTextCursor spacing={80} maxPoints={15} theme={theme} />
+            
+            {/* Instruction text */}
+            <div className="absolute top-1/4 text-center">
+              <motion.p
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 1 }}
+                className="text-sm md:text-lg font-bold tracking-widest mb-2"
+                style={{
+                  color: theme.primary,
+                  textShadow: `0 0 15px ${theme.shadow}`
+                }}
+              >
+                MOVE YOUR CURSOR
+              </motion.p>
+            </div>
+
             <DithrButton
               onClick={() => setCurrentPage('home')}
               theme={theme}
-              className="text-white font-black tracking-wider cursor-pointer border-4 md:border-4 z-10 transition-all duration-500 px-12 py-4 md:px-20 md:py-6 rounded-full"
+              className="text-white font-black tracking-wider cursor-pointer border-4 z-10 transition-all duration-500 px-12 py-4 md:px-20 md:py-6 rounded-lg"
               style={{
                 fontSize: 'clamp(2.5rem, 10vw, 6rem)',
                 borderColor: theme.border,
@@ -986,6 +1044,22 @@ export default function App() {
             >
               <DecryptedText text="ENTER" animateOn="hover" speed={40} maxIterations={30} />
             </DithrButton>
+
+            {/* Hint text */}
+            <div className="absolute bottom-12 text-center">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-xs md:text-sm font-bold tracking-widest"
+                style={{
+                  color: theme.primary,
+                  textShadow: `0 0 10px ${theme.shadow}`
+                }}
+              >
+                HOVER TO DECRYPT
+              </motion.p>
+            </div>
           </div>
         );
 
@@ -994,16 +1068,14 @@ export default function App() {
           <div 
             className="w-full h-screen flex flex-col items-center justify-center relative overflow-hidden p-4"
             style={{
-              background: theme.secondary,
-              backgroundImage: 'url("https://antlii.work/plain-generator")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundBlendMode: 'overlay'
+              background: '#0a0a0a'
             }}
           >
+            <NeonGrid theme={theme} />
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
-            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6">
+            
+            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 mb-8">
               {['J', 'A', 'Y', 'K'].map((letter, i) => (
                 <motion.div
                   key={i}
@@ -1025,6 +1097,19 @@ export default function App() {
                 </motion.div>
               ))}
             </div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="text-base md:text-xl font-bold tracking-widest text-center"
+              style={{
+                color: theme.primary,
+                textShadow: `0 0 15px ${theme.shadow}`
+              }}
+            >
+              OFFICIAL ARTIST WEBSITE
+            </motion.p>
           </div>
         );
 
@@ -1033,49 +1118,53 @@ export default function App() {
           <div 
             className="w-full h-screen flex items-center justify-center relative overflow-hidden p-4"
             style={{
-              background: theme.secondary,
-              backgroundImage: 'url("https://antlii.work/plain-generator")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundBlendMode: 'overlay'
+              background: '#0a0a0a'
             }}
           >
+            <NeonGrid theme={theme} />
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
-            <div className="flex flex-col items-center gap-8">
+            
+            <div className="flex flex-col items-center gap-8 z-10">
+              <motion.div
+                initial={{ opacity: 0, y: -30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <RefractText text="LISTEN NOW" theme={theme} />
+              </motion.div>
+
               <a
                 href="https://open.spotify.com/artist/5yci4gTmKIa4MnuhRQqtJn?si=9857dbdc1de74376"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-black cursor-pointer no-underline z-10 px-8 py-4 md:px-20 md:py-10 border-2 md:border-4 rounded-full text-center block"
+                className="font-black cursor-pointer no-underline z-10 px-8 py-4 md:px-20 md:py-10 border-4 rounded-lg text-center block backdrop-blur-sm"
                 style={{
                   fontSize: 'clamp(1.5rem, 6vw, 4.5rem)',
                   color: '#fff',
-                  background: '#000',
+                  background: 'rgba(10, 10, 10, 0.8)',
                   borderColor: '#1db954',
-                  boxShadow: '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)',
+                  boxShadow: '0 0 40px rgba(29, 185, 84, 0.8), inset 0 0 20px rgba(29, 185, 84, 0.3)',
                   transition: 'all 0.5s ease',
                   letterSpacing: '0.1em',
                   textShadow: '0 0 20px rgba(29, 185, 84, 0.8)',
-                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
-                  backgroundImage: 'radial-gradient(circle, rgba(29, 185, 84, 0.2) 1px, transparent 1px)',
-                  backgroundSize: '8px 8px'
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
                   e.currentTarget.style.background = 'linear-gradient(145deg, #1db954, #1ed760)';
                   e.currentTarget.style.borderColor = '#fff';
-                  e.currentTarget.style.boxShadow = '0 0 70px rgba(29, 185, 84, 1), inset 0 0 40px rgba(255, 255, 255, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 0 60px rgba(29, 185, 84, 1), inset 0 0 30px rgba(255, 255, 255, 0.3)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.background = '#000';
+                  e.currentTarget.style.background = 'rgba(10, 10, 10, 0.8)';
                   e.currentTarget.style.borderColor = '#1db954';
-                  e.currentTarget.style.boxShadow = '0 0 50px rgba(29, 185, 84, 0.8), inset 0 0 30px rgba(29, 185, 84, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 0 40px rgba(29, 185, 84, 0.8), inset 0 0 20px rgba(29, 185, 84, 0.3)';
                 }}
               >
                 <DecryptedText
-                  text="LISTEN ON SPOTIFY"
+                  text="SPOTIFY"
                   animateOn="both"
                   speed={35}
                   maxIterations={25}
@@ -1083,6 +1172,19 @@ export default function App() {
                   revealDirection="center"
                 />
               </a>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-sm md:text-base tracking-widest"
+                style={{
+                  color: theme.primary,
+                  textShadow: `0 0 10px ${theme.shadow}`
+                }}
+              >
+                STREAM ALL TRACKS
+              </motion.p>
             </div>
           </div>
         );
@@ -1092,48 +1194,42 @@ export default function App() {
           <div 
             className="w-full h-screen flex items-center justify-center relative overflow-hidden p-4 md:p-8"
             style={{
-              background: theme.secondary,
-              backgroundImage: 'url("https://antlii.work/plain-generator")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundBlendMode: 'overlay'
+              background: '#0a0a0a'
             }}
           >
+            <NeonGrid theme={theme} />
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+            
             <div className="text-center z-10 max-w-full">
-              <div className="mb-8 flex justify-center">
+              <div className="mb-12 flex justify-center">
                 <RefractText text="GET IN TOUCH" theme={theme} />
               </div>
               
               <a
                 href="mailto:JAYK47MGMT@GMAIL.COM"
-                className="font-bold transition-all duration-500 no-underline inline-block px-6 py-3 md:px-12 md:py-6 border-2 md:border-4 rounded-2xl md:rounded-full break-all"
+                className="font-bold transition-all duration-500 no-underline inline-block px-6 py-3 md:px-12 md:py-6 border-4 rounded-lg break-all backdrop-blur-sm"
                 style={{
                   fontSize: 'clamp(1rem, 4vw, 2.5rem)',
                   color: theme.text,
-                  background: theme.secondary,
+                  background: 'rgba(10, 10, 10, 0.8)',
                   borderColor: theme.border,
-                  boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`,
+                  boxShadow: `0 0 30px ${theme.shadow}, inset 0 0 15px ${theme.glow}`,
                   letterSpacing: '0.05em',
                   maxWidth: '90vw',
-                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
-                  backgroundImage: `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`,
-                  backgroundSize: '6px 6px'
+                  fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.05)';
                   e.currentTarget.style.background = theme.gradient;
-                  e.currentTarget.style.borderColor = theme.text === '#000' ? '#000' : '#fff';
-                  e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 30px rgba(255, 255, 255, 0.3)`;
-                  e.currentTarget.style.backgroundImage = 'none';
+                  e.currentTarget.style.borderColor = '#fff';
+                  e.currentTarget.style.boxShadow = `0 0 50px ${theme.shadow}, inset 0 0 25px rgba(255, 255, 255, 0.3)`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.background = theme.secondary;
+                  e.currentTarget.style.background = 'rgba(10, 10, 10, 0.8)';
                   e.currentTarget.style.borderColor = theme.border;
-                  e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 20px ${theme.glow}`;
-                  e.currentTarget.style.backgroundImage = `radial-gradient(circle, ${theme.primary} 1px, transparent 1px)`;
+                  e.currentTarget.style.boxShadow = `0 0 30px ${theme.shadow}, inset 0 0 15px ${theme.glow}`;
                 }}
               >
                 <DecryptedText
@@ -1143,6 +1239,19 @@ export default function App() {
                   maxIterations={30}
                 />
               </a>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-sm md:text-base tracking-widest mt-8"
+                style={{
+                  color: theme.primary,
+                  textShadow: `0 0 10px ${theme.shadow}`
+                }}
+              >
+                FOR BOOKINGS & INQUIRIES
+              </motion.p>
             </div>
           </div>
         );
@@ -1152,44 +1261,63 @@ export default function App() {
           <div 
             className="w-full h-screen flex items-center justify-center relative overflow-hidden p-4"
             style={{
-              background: theme.secondary,
-              backgroundImage: 'url("https://antlii.work/plain-generator")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundBlendMode: 'overlay'
+              background: '#0a0a0a'
             }}
           >
+            <NeonGrid theme={theme} />
             <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} isMenuOpen={isMenuOpen} />
             <BubbleMenu items={menuItems} onNavigate={handleNavigate} theme={theme} isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />
+            
             <div className="text-center z-10 flex flex-col items-center gap-8">
               <div className="mb-4">
                 <p 
-                  className="text-xl md:text-2xl font-bold mb-8"
+                  className="text-lg md:text-xl font-bold mb-8 tracking-widest"
                   style={{
                     color: theme.primary,
                     textShadow: `0 0 20px ${theme.shadow}`,
                     fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
-                    letterSpacing: '0.15em',
-                    fontWeight: 'bold'
+                    letterSpacing: '0.2em'
                   }}
                 >
-                  EXCLUSIVE CONTENT & BEHIND THE SCENES
+                  EXCLUSIVE CONTENT
                 </p>
               </div>
+              
               <div className="flex justify-center">
                 <SplitXText text="COMING SOON" theme={theme} />
               </div>
+              
               <p 
-                className="text-base md:text-xl font-normal mt-4"
+                className="text-base md:text-xl tracking-widest mt-4"
                 style={{
-                  color: theme.text === '#000' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.8)',
-                  textShadow: theme.text === '#000' ? 'none' : `0 0 10px ${theme.shadow}`,
+                  color: theme.primary,
+                  textShadow: `0 0 15px ${theme.shadow}`,
                   fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif",
-                  letterSpacing: '0.1em'
+                  opacity: 0.8
                 }}
               >
-                NEW SNIPPETS DROPPING SOON
+                UNRELEASED TRACKS & BEHIND THE SCENES
               </p>
+
+              <motion.div
+                animate={{ opacity: [0.3, 0.8, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="mt-8 px-8 py-4 border-2 rounded-lg"
+                style={{
+                  borderColor: theme.border,
+                  boxShadow: `0 0 20px ${theme.shadow}`
+                }}
+              >
+                <p 
+                  className="text-sm md:text-base tracking-widest"
+                  style={{
+                    color: theme.text,
+                    fontFamily: "'Green Mind', 'Impact', 'Arial Black', sans-serif"
+                  }}
+                >
+                  STAY TUNED
+                </p>
+              </motion.div>
             </div>
           </div>
         );
