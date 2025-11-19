@@ -452,7 +452,7 @@ function SplitXText({ text, theme }) {
 
     return () => {
       if (animationRef.current) {
-        cancelAnimationRef.current);
+        cancelAnimationFrame(animationRef.current);
       }
     };
   }, [text, theme]);
