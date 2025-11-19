@@ -533,7 +533,7 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
                   onThemeChange(key);
                   setIsOpen(false);
                 }}
-                className="w-12 h-12 md:w-14 md:h-14 rounded-lg border-2 cursor-pointer transition-all duration-300 relative group"
+                className="rounded-lg border-2 cursor-pointer transition-all duration-300 relative group"
                 style={{
                   background: themes[key].gradient,
                   borderColor: currentTheme === key ? '#fff' : themes[key].border,
@@ -541,6 +541,8 @@ function ThemeSelector({ currentTheme, onThemeChange, isMenuOpen }) {
                     ? `0 0 25px ${themes[key].shadow}, 0 0 50px ${themes[key].glow}` 
                     : `0 0 10px ${themes[key].shadow}`,
                   transform: currentTheme === key ? 'scale(1.1)' : 'scale(1)',
+                  width: '60px',
+                  height: '60px'
                 }}
               >
                 <span 
